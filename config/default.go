@@ -1,10 +1,8 @@
 package config
 
 import (
-	"encoding/gob"
 	"net/http"
 	"strings"
-	"template/service"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
@@ -23,7 +21,6 @@ func InitSession(r *gin.Engine) {
 	}
 	store.Options(opts)
 	r.Use(sessions.Sessions("sessions", store))
-	gob.Register(service.UserSession{})
 }
 
 func SetCORS(r *gin.Engine) {

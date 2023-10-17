@@ -10,6 +10,7 @@ var Config struct {
 	AppProd      bool
 	AppMode      string
 	AppSecret    string
+	AppLanguage  string
 	MysqlHost    string
 	MysqlPort    string
 	MysqlName    string
@@ -35,6 +36,7 @@ func initConfig() {
 		Config.AppMode = "debug"
 	}
 	Config.AppSecret = envOr("APP_SECRET", "gin-example:secret")
+	Config.AppLanguage = envOr("APP_LANGUAGE", "en")
 	Config.MysqlHost = envOr("APP_MYSQL_HOST", "127.0.0.1")
 	Config.MysqlPort = envOr("APP_MYSQL_PORT", "3306")
 	Config.MysqlName = envOr("APP_MYSQL_NAME", "static")

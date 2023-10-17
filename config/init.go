@@ -7,5 +7,5 @@ import (
 func init() {
 	initConfig()
 	initLogger()
-	validator.InitValidator()
+	validator.InitValidator(Config.AppLanguage)
 }

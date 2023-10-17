@@ -2,10 +2,13 @@
 
 gin应用示例
 
+## tz-gin-cli
+tz-gin-cli的热更新`tz-gin run`
+
 ## 快速预览
 
 ```
-go run .
+tz-gin run
 ```
 
 ## 目录结构
@@ -35,7 +38,7 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 - 项目**实际**上线时， `APP_PROD` 应设置为任意非空字符串，以开启生产模式
 - 项目**实际**上线时， `APP_SECRET` 应设置为各应用互不相同的字符串并保密
-- 项目**实际**上线时， `APP_ALLOW_HEADERS` `APP_ALLOW_ORIGINS` 来防止存在的跨域`CORS`风险，如果有多个则使用`|`分开
+- 项目**实际**上线时， `APP_ALLOW_HEADERS` `APP_ALLOW_ORIGINS` 应设置来防止存在的跨域`CORS`风险，如果有多个则使用`|`分开
 
 ## 日志
 

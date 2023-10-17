@@ -2,3 +2,5 @@
 /log/
 tmp
 static
+.env
+!.env.example

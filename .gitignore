@@ -4,3 +4,4 @@ tmp
 static
 .env
 !.env.example
+go.sum

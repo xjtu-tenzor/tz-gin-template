@@ -30,7 +30,7 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 ## 数据库
 
-数据库sql文件为 `gin-example.sql` ，请设置环境变量以指定数据库
+数据库sql文件为 `gin-example.sql` ，请设置环境变量以指定数据库，该sql文件只存储基本表结构而不应存在数据，数据库的更新则应以增量更新的方式 `gin-example-unix_timestamp.up.sql`
 
 ## 环境变量
 
@@ -43,3 +43,50 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 ## 日志
 
 在生产模式下，日志会输出到 `log` 目录下
+
+
+# 项目开发规范
+
+#### tz-gin受到 koa 洋葱模型的思想，故设计如下的项目开发规范
+
+## session
+
+使用`service/service.go`下提供的函数进行session的处理，session的密钥应在**生产环境**中通过**环境变量**形式传入 `APP_SECRET`
+
+## controller 的注册方式
+
+将对相同资源处理的方法绑定在同一个结构体上，详情可见示例`controller/hello-example.go`
+
+同时将该结构体注册到`controller/controller.go`的`Controller`结构体中
+
+## service 的注册方式
+
+注册方式同controller相同，将对相同资源处理的方法绑定在同一个结构体上，示例见`service/hello-example.go`
+
+同时将该结构体注册到`service/service.go`的`Service`结构体中
+
+## controller & service
+
+- 在 `controller` 中对应的 `.go` 文件下，构造一个函数将 `Request` 绑定为 `model` 中的结构体
+
+- 将该结构体传入 `service` ，`session` `page` `limit` 等作为其他参数传入
+
+- `service` 的第一个返回值应为返回体中的 `data` 部分，`Response` 应在 `service` 中定义
+
+## 错误异常处理
+
+在出现非法操作和调用方法出现错误时，应调用 `service` 下的 `ErrNew` 方法并将错误返回到 `controller` 层统一处理（在边界情况明晰的情况下）,下面时 `ErrNew` 的函数原型及相关错误码
+
+```go
+func ErrNew(err error, errType gin.ErrorType) error
+
+const (
+	ParamErr gin.ErrorType = iota + 3   //参数错误
+	SysErr                              //系统错误
+	OpErr                               //操作错误
+	AuthErr                             //鉴权错误
+	LevelErr                            //权限错误
+)
+```
+
+当你想自定义错误码时，请与前端进行沟通

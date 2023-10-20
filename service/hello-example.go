@@ -12,8 +12,7 @@ type Hello struct {
 func (h *Hello) Hello(msg string) (string, error) {
 	msg_int, err := strconv.Atoi(msg)
 	if err != nil {
-		err = ErrNew(err, SysErr)
-		return "", err
+		return "", ErrNew(err, SysErr)
 	}
 	return fmt.Sprintf("hello %v times", msg_int), nil
 }

@@ -42,14 +42,17 @@ func init() {
 
 	DB = db
 
-	initModel()
+	if !config.Config.AppProd {
+		initModel()
+	}
+
 }
 
 func initModel() {
-	if !config.Config.AppProd {
-		// example
-		// begin
-		DB.AutoMigrate(&Resource{})
-		//end
-	}
+
+	// example
+	// begin
+	DB.AutoMigrate(&Resource{})
+	//end
+
 }

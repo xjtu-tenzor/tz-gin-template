@@ -13,6 +13,9 @@ func main() {
 	fmt.Println(config.Config.AppSecret)
 	srv := router.NewServer()
 
-	srv.ListenAndServe()
+	if err := srv.ListenAndServe(); err != nil {
+		fmt.Printf("fail to init server: %s\n", err.Error())
+		panic(err)
+	}
 
 }

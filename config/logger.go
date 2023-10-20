@@ -3,15 +3,15 @@ package config
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 )
 
-func createLogger(name string) io.Writer {
+func createLogger(prefix string) io.Writer {
 	err := os.Mkdir("log", 0755)
 	if err != nil && !os.IsExist(err) {
 		fmt.Println("创建文件夹失败：", err)
@@ -21,16 +21,31 @@ func createLogger(name string) io.Writer {
 	if err != nil {
 		panic(err)
 	}
-	fileName := path.Join(dir, "log", name+".log")
-	logger, err := rotatelogs.New(fileName+".%Y%m%d",
-		// rotatelogs.WithLinkName(fileName),
-		rotatelogs.WithMaxAge(30*24*time.Hour),
-		rotatelogs.WithRotationTime(24*time.Hour))
+
+	dateString := time.Now().Format("20060102")
+	fileName := path.Join(dir, "log", fmt.Sprintf("%s.log.%s", prefix, dateString))
+	logFile, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to open log file: %v", err)
 	}
 
-	return logger
+	go func() {
+		for {
+			currentDateString := time.Now().Format("20060102")
+			if currentDateString != dateString {
+				dateString = currentDateString
+				newFileName := path.Join(dir, "log", fmt.Sprintf("%s.log.%s", prefix, dateString))
+				logFile.Close()
+				logFile, err = os.OpenFile(newFileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+				if err != nil {
+					log.Fatalf("Failed to open log file: %v", err)
+				}
+			}
+			time.Sleep(time.Second * 10)
+		}
+	}()
+
+	return logFile
 }
 
 var GinLogger io.Writer

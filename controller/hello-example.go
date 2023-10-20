@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"template/service"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +18,7 @@ func (s *Hello) Hello(c *gin.Context) {
 	}
 	if err := c.ShouldBindQuery(&form); err != nil {
 		fmt.Printf("controller %v\n", err)
-		c.Error(service.ErrNew(err, service.ParamErr))
+		c.Error(ErrNew(err, ParamErr))
 		return
 	}
 
@@ -42,10 +41,7 @@ func (s *Hello) HelloTime(c *gin.Context) {
 	}
 	if err := c.ShouldBindQuery(&form); err != nil {
 		fmt.Printf("controller %v\n", err)
-		c.Error(&gin.Error{
-			Err:  err,
-			Type: service.ParamErr,
-		})
+		c.Error(ErrNew(err, ParamErr))
 		return
 	}
 	resp := srv.Hello.HelloTime(form.Date)

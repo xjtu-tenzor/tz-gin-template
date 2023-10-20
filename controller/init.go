@@ -40,4 +40,12 @@ var ErrorMapper = map[uint64]string{
 	7: "权限错误",
 }
 
+func ErrNew(err error, errType gin.ErrorType) error {
+	err = &gin.Error{
+		Err:  err,
+		Type: errType,
+	}
+	return err
+}
+
 var srv = service.New()

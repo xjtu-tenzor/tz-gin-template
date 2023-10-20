@@ -10,7 +10,6 @@ import (
 
 func main() {
 	gin.SetMode(config.Config.AppMode)
-	fmt.Println(config.Config.AppSecret)
 	srv := router.NewServer()
 
 	if err := srv.ListenAndServe(); err != nil {

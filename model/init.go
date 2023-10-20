@@ -41,4 +41,15 @@ func init() {
 	}
 
 	DB = db
+
+	initModel()
+}
+
+func initModel() {
+	if config.Config.AppProd {
+		// example
+		// begin
+		DB.AutoMigrate(&Resource{})
+		//end
+	}
 }

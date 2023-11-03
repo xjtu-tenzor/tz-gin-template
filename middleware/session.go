@@ -9,10 +9,9 @@ import (
 )
 
 func SessionUse(c *gin.Context) {
-	c.Next()
 	if _, ok := c.Get("init"); !ok {
 		c.Set("init", 1)
-		return
+		c.Next()
 	}
 	if _, ok := c.Get("session_used"); ok {
 		session := sessions.Default(c)

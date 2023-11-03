@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/gob"
-	"errors"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -19,40 +18,27 @@ func sessionGet(c *gin.Context, name string) interface{} {
 	return session.Get(name)
 }
 
-func sessionSet(c *gin.Context, name string, body interface{}) error {
+func sessionSet(c *gin.Context, name string, body interface{}) {
+	c.Set("session_used", 1)
 	session := sessions.Default(c)
 	if body == nil {
-		return ErrNew(errors.New("body is nil"), OpErr)
+		return
 	}
 	gob.Register(body)
 	session.Set(name, body)
-	return session.Save()
+
 }
 
-func sessionUpdate(c *gin.Context, name string, body interface{}) error {
-	if sessionGet(c, name) == nil {
-		return ErrNew(errors.New("cannot find session, Set please"), OpErr)
-	}
-	return sessionSet(c, name, body)
+func sessionUpdate(c *gin.Context, name string, body interface{}) {
+	sessionSet(c, name, body)
 }
 
-func sessionClear(c *gin.Context) error {
+func sessionClear(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
-	if err := session.Save(); err != nil {
-		return ErrNew(err, OpErr)
-	}
-	return nil
 }
 
-func sessionDelete(c *gin.Context, name string) error {
+func sessionDelete(c *gin.Context, name string) {
 	session := sessions.Default(c)
-	if sessionGet(c, name) == nil {
-		return errors.New("cannot find session, Set please")
-	}
 	session.Delete(name)
-	if err := session.Save(); err != nil {
-		return ErrNew(err, OpErr)
-	}
-	return nil
 }

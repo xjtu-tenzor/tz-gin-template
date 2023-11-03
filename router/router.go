@@ -7,7 +7,7 @@ import (
 )
 
 func InitRouter(r *gin.Engine) {
-	r.Use(middleware.Error)
+	r.Use(middleware.Error, middleware.SessionUse)
 
 	apiRouter := r.Group("/api")
 	{

@@ -13,12 +13,12 @@ type UserSession struct {
 	Level    int
 }
 
-func sessionGet(c *gin.Context, name string) interface{} {
+func SessionGet(c *gin.Context, name string) interface{} {
 	session := sessions.Default(c)
 	return session.Get(name)
 }
 
-func sessionSet(c *gin.Context, name string, body interface{}) {
+func SessionSet(c *gin.Context, name string, body interface{}) {
 	c.Set("session_used", 1)
 	session := sessions.Default(c)
 	if body == nil {
@@ -29,16 +29,16 @@ func sessionSet(c *gin.Context, name string, body interface{}) {
 
 }
 
-func sessionUpdate(c *gin.Context, name string, body interface{}) {
-	sessionSet(c, name, body)
+func SessionUpdate(c *gin.Context, name string, body interface{}) {
+	SessionSet(c, name, body)
 }
 
-func sessionClear(c *gin.Context) {
+func SessionClear(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
 }
 
-func sessionDelete(c *gin.Context, name string) {
+func SessionDelete(c *gin.Context, name string) {
 	session := sessions.Default(c)
 	session.Delete(name)
 }

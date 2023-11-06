@@ -22,7 +22,12 @@ func Error(c *gin.Context) {
 		err := c.Errors.Last().Err
 		switch err := err.(type) {
 		case validator.ValidationErrors:
-			errorHandle(c, err.Translate(vl.Trans))
+			var errs string
+			for _, v := range err.Translate(vl.Trans) {
+				errs = fmt.Sprintf("%v,%v", errs, v)
+			}
+			errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
+			errorHandle(c, errMsg)
 		case *strconv.NumError, *json.UnmarshalTypeError:
 			errorHandle(c, errors.New("错误的传入参数"))
 		default:
@@ -32,24 +37,10 @@ func Error(c *gin.Context) {
 }
 
 func errorHandle(c *gin.Context, err any) {
-	switch err := err.(type) {
-	case validator.ValidationErrorsTranslations:
-		var errs string
-		for _, v := range err {
-			errs = fmt.Sprintf("%v,%v", errs, v)
-		}
-		errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
-		c.JSON(http.StatusOK, controller.Response{
-			Success: false,
-			Message: errMsg,
-			Code:    uint64(c.Errors.Last().Type),
-		})
-	default:
-		errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], err)
-		c.JSON(http.StatusOK, controller.Response{
-			Success: false,
-			Message: errMsg,
-			Code:    uint64(c.Errors.Last().Type),
-		})
-	}
+	errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], err)
+	c.JSON(http.StatusOK, controller.Response{
+		Success: false,
+		Message: errMsg,
+		Code:    uint64(c.Errors.Last().Type),
+	})
 }

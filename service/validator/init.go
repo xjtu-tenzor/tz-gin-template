@@ -10,6 +10,7 @@ import (
 
 	ut "github.com/go-playground/universal-translator"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
+	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 )
 
 type validateHandle struct {
@@ -41,7 +42,15 @@ func InitValidator(locale string) {
 
 		switch locale {
 		case "zh":
-			validatorDefault(v, Trans)
+			if err := zhTranslations.RegisterDefaultTranslations(v, Trans); err != nil {
+				panic(err)
+			}
+			for name, function := range validatorHandleRouter {
+				err := v.RegisterValidation(name, function.Func)
+				if err != nil {
+					panic(err)
+				}
+			}
 			for name, function := range validatorHandleRouter {
 				if err := v.RegisterTranslation(name, Trans, function.RegisterTranslationsFunc, func(ut ut.Translator, fe validator.FieldError) string {
 					t, _ := ut.T(name, fe.Field())
@@ -51,14 +60,14 @@ func InitValidator(locale string) {
 				}
 			}
 		case "en":
-			validatorDefault(v, Trans)
+			validatorDefault(v)
 		default:
-			validatorDefault(v, Trans)
+			validatorDefault(v)
 		}
 	}
 }
 
-func validatorDefault(v *validator.Validate, Trans ut.Translator) {
+func validatorDefault(v *validator.Validate) {
 	if err := enTranslations.RegisterDefaultTranslations(v, Trans); err != nil {
 		panic(err)
 	}

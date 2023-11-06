@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"template/controller"
 
@@ -31,10 +32,24 @@ func Error(c *gin.Context) {
 }
 
 func errorHandle(c *gin.Context, err any) {
-	errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], err)
-	c.JSON(http.StatusOK, controller.Response{
-		Success: false,
-		Message: errMsg,
-		Code:    uint64(c.Errors.Last().Type),
-	})
+	switch err := err.(type) {
+	case validator.ValidationErrorsTranslations:
+		var errs string
+		for _, v := range err {
+			errs = fmt.Sprintf("%v,%v", errs, v)
+		}
+		errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
+		c.JSON(http.StatusOK, controller.Response{
+			Success: false,
+			Message: errMsg,
+			Code:    uint64(c.Errors.Last().Type),
+		})
+	default:
+		errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], err)
+		c.JSON(http.StatusOK, controller.Response{
+			Success: false,
+			Message: errMsg,
+			Code:    uint64(c.Errors.Last().Type),
+		})
+	}
 }

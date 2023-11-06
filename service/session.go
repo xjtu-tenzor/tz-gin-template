@@ -19,7 +19,6 @@ func SessionGet(c *gin.Context, name string) interface{} {
 }
 
 func SessionSet(c *gin.Context, name string, body interface{}) {
-	c.Set("session_used", 1)
 	session := sessions.Default(c)
 	if body == nil {
 		return

@@ -23,16 +23,14 @@ func (s *Hello) Hello(c *gin.Context) {
 	}
 
 	resp, err := srv.Hello.Hello(form.Msg)
+
 	if err != nil {
 		fmt.Printf("controller %v\n", err)
 		c.Error(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, Response{
-		Success: true,
-		Data:    resp,
-	})
+	c.JSON(http.StatusOK, ResponseNew(c, resp))
 }
 
 func (s *Hello) HelloTime(c *gin.Context) {
@@ -46,8 +44,5 @@ func (s *Hello) HelloTime(c *gin.Context) {
 	}
 	resp := srv.Hello.HelloTime(form.Date)
 
-	c.JSON(http.StatusOK, Response{
-		Success: true,
-		Data:    resp,
-	})
+	c.JSON(http.StatusOK, ResponseNew(c, resp))
 }

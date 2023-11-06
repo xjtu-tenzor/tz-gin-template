@@ -3,6 +3,7 @@ package controller
 import (
 	"template/service"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,6 +12,21 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`
 	Message string      `json:"message,omitempty"`
 	Code    uint64      `json:"code,omitempty"`
+}
+
+func ResponseNew(c *gin.Context, obj any) *Response {
+	session := sessions.Default(c)
+	if session.Save() != nil {
+		return &Response{
+			Success: false,
+			Message: "fail to save session",
+			Code:    uint64(SysErr),
+		}
+	}
+	return &Response{
+		Success: true,
+		Data:    obj,
+	}
 }
 
 type IDUriForm struct {

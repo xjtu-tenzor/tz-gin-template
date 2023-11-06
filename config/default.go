@@ -20,7 +20,7 @@ func InitSession(r *gin.Engine) {
 		SameSite: http.SameSiteLaxMode,
 	}
 	store.Options(opts)
-	r.Use(sessions.Sessions("sessions", store))
+	r.Use(sessions.Sessions("tz-sessions", store))
 }
 
 func SetCORS(r *gin.Engine) {

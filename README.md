@@ -67,7 +67,7 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 ## controller & service
 
-- 在 `controller` 中对应的 `.go` 文件下，构造一个函数将 `Request` 绑定为 `model` 中的结构体
+- ~~在 `controller` 中对应的 `.go` 文件下，构造一个函数将 `Request` 绑定为 `model` 中的结构体~~
 
 - 将该结构体传入 `service` ，`session` `page` `limit` 等作为其他参数传入
 
@@ -75,7 +75,7 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 ## 错误异常处理
 
-在出现非法操作和调用方法出现错误时，应调用 `service` 下的 `ErrNew` 方法并将错误返回到 `controller` 层统一处理（在边界情况明晰的情况下）,下面时 `ErrNew` 的函数原型及相关错误码
+在出现非法操作和调用方法出现错误时，应调用 `ErrNew` 方法并将错误返回到 `controller` 层统一处理（在边界情况明晰的情况下）,下面时 `ErrNew` 的函数原型及相关错误码
 
 ```go
 func ErrNew(err error, errType gin.ErrorType) error
@@ -90,3 +90,38 @@ const (
 ```
 
 当你想自定义错误码时，请与前端进行沟通
+
+## 自定义校验规则书写方式
+
+- 校验规则应书写两个函数，一个函数为校验规则判断函数，另一个函数为翻译函数，俩函数原型如下
+
+	```go
+	func(fl FieldLevel) bool		// 校验函数
+	func(ut ut.Translator) error	// 翻译函数
+
+	```
+
+	以下是我们提供的示例代码，也可在 `service/validator/validators.go` 和 `service/validator/translations.go` 看到
+
+	```go
+	// 校验函数
+	func timing(fl validator.FieldLevel) bool {			// 自定义应满足的时间
+		if date, ok := fl.Field().Interface().(time.Time); ok {
+			today := time.Now()
+			if today.After(date) {
+				return false
+			}
+		}
+		return true
+	}
+
+
+	// 翻译函数
+	func timingTransZh(ut ut.Translator) error {
+		return ut.Add("timing", "{0}输入的时间不符合要求", true) // {0}表示会替代加了该校验的字段
+	}
+	```
+
+- 自定义校验的注册应放在 `service/validator/init.go` 的 `validatorHandleRouter` 中，`key` 值表示的是自定义校验的名称
+
+- 校验规则应写在 `validators.go` 下面，翻译则应写在 `translations.go` 下面

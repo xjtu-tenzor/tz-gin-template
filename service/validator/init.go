@@ -14,10 +14,11 @@ import (
 )
 
 type validateHandle struct {
-	validator.Func
-	validator.RegisterTranslationsFunc
+	validator.Func                     //校验规则
+	validator.RegisterTranslationsFunc //翻译规则
 }
 
+// 自定义校验规则及翻译应在此处注册
 var validatorHandleRouter = map[string]validateHandle{
 	"timing": {
 		timing,

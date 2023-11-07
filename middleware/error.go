@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"template/controller"
 
@@ -28,8 +30,8 @@ func Error(c *gin.Context) {
 			}
 			errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
 			errorHandle(c, errMsg)
-		case *strconv.NumError, *json.UnmarshalTypeError:
-			errorHandle(c, errors.New("错误的传入参数"))
+		case *strconv.NumError, *json.UnmarshalTypeError, *time.ParseError, *xml.SyntaxError:
+			errorHandle(c, errors.New("错误或非法的传入参数"))
 		default:
 			errorHandle(c, err)
 		}

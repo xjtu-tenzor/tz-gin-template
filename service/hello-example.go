@@ -18,5 +18,5 @@ func (h *Hello) Hello(msg string) (string, error) {
 }
 
 func (h *Hello) HelloTime(date time.Time) string {
-	return fmt.Sprintf("tomorrow is %v", date.Format("2006-01-02"))
+	return fmt.Sprintf("tomorrow is %v, really?", date.Format("2006-01-02"))
 }

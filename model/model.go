@@ -26,12 +26,12 @@ func (n Fields) GormDataType() string {
 
 func (n Fields) GormValue(_ context.Context, _ *gorm.DB) clause.Expr {
 	if len(n) == 0 {
-		return clause.Expr{SQL: "?", Vars: []interface{}{"null"}}
+		return clause.Expr{SQL: "?", Vars: []any{"null"}}
 	}
-	return clause.Expr{SQL: "?", Vars: []interface{}{string(n)}}
+	return clause.Expr{SQL: "?", Vars: []any{string(n)}}
 }
 
-func (n *Fields) Scan(value interface{}) error {
+func (n *Fields) Scan(value any) error {
 	*n = []byte(fmt.Sprintf("%s", value))
 	return nil
 }

@@ -8,10 +8,10 @@ import (
 )
 
 type Response struct {
-	Success bool        `json:"success"`
-	Data    interface{} `json:"data,omitempty"`
-	Message string      `json:"message,omitempty"`
-	Code    uint64      `json:"code,omitempty"`
+	Success bool   `json:"success"`
+	Data    any    `json:"data,omitempty"`
+	Message string `json:"message,omitempty"`
+	Code    uint64 `json:"code,omitempty"`
 }
 
 func ResponseNew(c *gin.Context, obj any) *Response {

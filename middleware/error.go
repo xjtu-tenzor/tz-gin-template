@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"template/common"
 	"template/controller"
 
 	vl "template/service/validator"
@@ -28,7 +29,7 @@ func Error(c *gin.Context) {
 			for _, v := range err.Translate(vl.Trans) {
 				errs = fmt.Sprintf("%v,%v", errs, v)
 			}
-			errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
+			errMsg := fmt.Sprintf("%v: %v\n", common.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
 			errorHandle(c, errMsg)
 		case *strconv.NumError, *json.UnmarshalTypeError, *time.ParseError, *xml.SyntaxError:
 			errorHandle(c, errors.New("错误或非法的传入参数"))
@@ -39,7 +40,7 @@ func Error(c *gin.Context) {
 }
 
 func errorHandle(c *gin.Context, err any) {
-	errMsg := fmt.Sprintf("%v: %v\n", controller.ErrorMapper[uint64(c.Errors.Last().Type)], err)
+	errMsg := fmt.Sprintf("%v: %v\n", common.ErrorMapper[uint64(c.Errors.Last().Type)], err)
 	c.JSON(http.StatusOK, controller.Response{
 		Success: false,
 		Message: errMsg,

@@ -3,24 +3,22 @@ package middleware
 import (
 	"errors"
 
+	"template/common"
 	"template/controller"
-	"template/service"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 func CheckRole(min int) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session := sessions.Default(c)
-		userSession := session.Get("user-session")
+		userSession := controller.SessionGet(c, "user-session")
 		if userSession == nil {
-			c.Error(service.ErrNew(errors.New("您未登录"), service.AuthErr))
+			c.Error(common.ErrNew(errors.New("您未登录"), common.AuthErr))
 			c.Abort()
 			return
 		}
 		if userSession.(controller.UserSession).Level < min {
-			c.Error(service.ErrNew(errors.New("权限不足"), service.LevelErr))
+			c.Error(common.ErrNew(errors.New("权限不足"), common.LevelErr))
 			c.Abort()
 			return
 		}

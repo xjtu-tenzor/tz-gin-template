@@ -1,8 +1,6 @@
-package service
+package common
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "github.com/gin-gonic/gin"
 
 const (
 	ParamErr gin.ErrorType = iota + 3

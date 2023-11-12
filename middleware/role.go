@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 
+	"template/controller"
 	"template/service"
 
 	"github.com/gin-contrib/sessions"
@@ -18,7 +19,7 @@ func CheckRole(min int) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if userSession.(service.UserSession).Level < min {
+		if userSession.(controller.UserSession).Level < min {
 			c.Error(service.ErrNew(errors.New("权限不足"), service.LevelErr))
 			c.Abort()
 			return

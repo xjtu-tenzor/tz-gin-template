@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/gob"
 	"template/service"
 
 	"github.com/gin-contrib/sessions"
@@ -65,3 +66,7 @@ func ErrNew(err error, errType gin.ErrorType) error {
 }
 
 var srv = service.New()
+
+func init() {
+	gob.Register(UserSession{})
+}

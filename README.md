@@ -14,13 +14,14 @@ tz-gin run
 ## 目录结构
 
 ```
-├─config       //配置文件
-├─controller   //所有与HTTP请求相关的业务逻辑都放在controller层中
-├─middleware   //中间件
-├─model        //模型
-├─router       //路由
-├─service      //服务
-│  └─validator //自定义数据校验
+├─common		//各层级都会使用，具有一定普遍性质的方法，比如错误处理
+├─config       	//配置文件
+├─controller   	//所有与HTTP请求相关的业务逻辑都放在controller层中
+├─middleware   	//中间件
+├─model        	//模型
+├─router       	//路由
+├─service      	//服务
+│  └─validator 	//自定义数据校验
 └─sql
 ```
 
@@ -34,7 +35,7 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 ## 环境变量
 
-环境变量名及其默认值在 `util/config.go` 中定义,为了方便，**在开发过程中**，也可以通过`.env`文件配置相关参数，项目开发时应拷贝`.env.example`为`.env`
+环境变量名及其默认值在 `config/config.go` 中定义,为了方便，**在开发过程中**，也可以通过`.env`文件配置相关参数，项目开发时应拷贝`.env.example`为`.env`
 
 - 项目**实际**上线时， `APP_PROD` 应设置为任意非空字符串，以开启生产模式
 - 项目**实际**上线时， `APP_SECRET` 应设置为各应用互不相同的字符串并保密
@@ -75,7 +76,7 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 ## 错误异常处理
 
-在出现非法操作和调用方法出现错误时，应调用 `ErrNew` 方法并将错误返回到 `controller` 层统一处理（在边界情况明晰的情况下）,下面时 `ErrNew` 的函数原型及相关错误码
+在出现非法操作和调用方法出现错误时，应调用 `common` 包下面的 `ErrNew` 方法并将错误返回到 `controller` 层统一处理（在边界情况明晰的情况下）,下面时 `ErrNew` 的函数原型及相关错误码
 
 ```go
 func ErrNew(err error, errType gin.ErrorType) error

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func DefaultPaginate(pager common.PagerForm) func(db *gorm.DB) *gorm.DB {
+func Paginate(pager common.PagerForm) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if pager.Page <= 0 {
 			pager.Page = 1

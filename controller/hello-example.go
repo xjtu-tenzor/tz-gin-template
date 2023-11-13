@@ -15,7 +15,7 @@ type Hello struct {
 func (s *Hello) Hello(c *gin.Context) {
 	var form struct {
 		Msg string `form:"msg" binding:"required"`
-		PagerForm
+		common.PagerForm
 	}
 	if err := c.ShouldBindQuery(&form); err != nil {
 		fmt.Printf("controller %v\n", err)

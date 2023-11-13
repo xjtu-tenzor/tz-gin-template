@@ -14,7 +14,7 @@ tz-gin run
 ## 目录结构
 
 ```
-├─common		//各层级都会使用，具有一定普遍性质的方法，比如错误处理
+├─common		//各层级都会复用的结构体及函数，比如错误处理
 ├─config       	//配置文件
 ├─controller   	//所有与HTTP请求相关的业务逻辑都放在controller层中
 ├─middleware   	//中间件
@@ -52,7 +52,13 @@ tz-gin提供了部分简单的示例代码，其放在`*-example.go`下，作为
 
 ## session
 
-使用`service/service.go`下提供的函数进行session的处理，session的密钥应在**生产环境**中通过**环境变量**形式传入 `APP_SECRET`
+使用`controller/session.go`下提供的函数进行session的处理，session的密钥应在**生产环境**中通过**环境变量**形式传入 `APP_SECRET`
+
+## model
+
+- `model` 中定义了与数据库相对应的模型，请在结构体的各字段中详细的写出相关的 `tag`
+- 在 `model.go` 中提供了 `baseModel` ，在声明模型是应该包含该结构体
+- 在 `scopes.go` 中提供了一些基础常见的服用逻辑，同时，在项目中，你也应该将一些复用通用的逻辑写在此处
 
 ## controller 的注册方式
 

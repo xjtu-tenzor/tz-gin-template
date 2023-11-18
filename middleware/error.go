@@ -29,8 +29,7 @@ func Error(c *gin.Context) {
 			for _, v := range err.Translate(vl.Trans) {
 				errs = fmt.Sprintf("%v,%v", errs, v)
 			}
-			errMsg := fmt.Sprintf("%v: %v\n", common.ErrorMapper[uint64(c.Errors.Last().Type)], strings.Replace(errs, ",", "", 1))
-			errorHandle(c, errMsg)
+			errorHandle(c, strings.Replace(errs, ",", "", 1))
 		case *strconv.NumError, *json.UnmarshalTypeError, *time.ParseError, *xml.SyntaxError:
 			errorHandle(c, errors.New("错误或非法的传入参数"))
 		default:

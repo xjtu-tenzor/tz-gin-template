@@ -19,6 +19,14 @@ func InitSession(r *gin.Engine) {
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	}
+	if !Config.AppProd {
+		opts = sessions.Options{
+			Secure:   false,
+			HttpOnly: false,
+			SameSite: http.SameSiteLaxMode,
+		}
+	}
+
 	store.Options(opts)
 	r.Use(sessions.Sessions("tz-sessions", store))
 }

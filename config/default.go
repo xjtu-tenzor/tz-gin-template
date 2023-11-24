@@ -6,12 +6,12 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/memstore"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
 func InitSession(r *gin.Engine) {
-	store := memstore.NewStore([]byte(Config.AppSecret))
+	store := cookie.NewStore([]byte(Config.AppSecret))
 	opts := sessions.Options{
 		Path:     "/",
 		MaxAge:   1800, // 30 Minutes

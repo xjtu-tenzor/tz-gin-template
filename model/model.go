@@ -12,10 +12,10 @@ import (
 )
 
 type BaseModel struct {
-	ID        int64          `gorm:"type:BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;primaryKey;comment:主键"`
-	CreatedAt time.Time      `gorm:"type:DATETIME(3) NOT NULL;comment:创建时间"`
-	UpdatedAt time.Time      `gorm:"type:DATETIME(3) NOT NULL;comment:更新时间"`
-	DeletedAt gorm.DeletedAt `gorm:"type:DATETIME(3) NULL;index;comment:删除时间"`
+	ID        int64          `gorm:"type:BIGINT(20);UNSIGNED;NOT NULL;AUTO_INCREMENT;primaryKey;comment:主键"`
+	CreatedAt time.Time      `gorm:"type:DATETIME(3);NOT NULL;comment:创建时间"`
+	UpdatedAt time.Time      `gorm:"type:DATETIME(3);NOT NULL;comment:更新时间"`
+	DeletedAt gorm.DeletedAt `gorm:"type:DATETIME(3);NULL;index;comment:删除时间"`
 }
 
 type Fields json.RawMessage

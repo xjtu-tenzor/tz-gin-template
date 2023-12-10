@@ -21,6 +21,8 @@ func InitSession(r *gin.Engine) {
 	}
 	if !Config.AppProd {
 		opts = sessions.Options{
+			Path:     "/",
+			MaxAge:   1800, // 30 Minutes
 			Secure:   false,
 			HttpOnly: false,
 			SameSite: http.SameSiteLaxMode,

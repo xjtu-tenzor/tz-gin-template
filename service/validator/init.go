@@ -53,10 +53,7 @@ func InitValidator(locale string) {
 				}
 			}
 			for name, function := range validatorHandleRouter {
-				if err := v.RegisterTranslation(name, Trans, function.RegisterTranslationsFunc, func(ut ut.Translator, fe validator.FieldError) string {
-					t, _ := ut.T(name, fe.Field())
-					return t
-				}); err != nil {
+				if err := v.RegisterTranslation(name, Trans, function.RegisterTranslationsFunc, translateFunc(name)); err != nil {
 					panic(err)
 				}
 			}
@@ -77,5 +74,12 @@ func validatorDefault(v *validator.Validate) {
 		if err != nil {
 			panic(err)
 		}
+	}
+}
+
+func translateFunc(name string) validator.TranslationFunc {
+	return func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T(name, fe.Field())
+		return t
 	}
 }

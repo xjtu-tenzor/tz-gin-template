@@ -18,6 +18,8 @@ var Config struct {
 	MysqlPass    string
 	AllowOrigins string
 	AllowHeaders string
+	RedisHost    string
+	RedisPort    string
 }
 
 func envOr(env string, or string) string {
@@ -44,4 +46,6 @@ func initConfig() {
 	Config.MysqlPass = envOr("APP_MYSQL_PASS", "123456")
 	Config.AllowOrigins = envOr("APP_ALLOW_ORIGINS", "*")
 	Config.AllowHeaders = envOr("APP_ALLOW_HEADERS", "Origin|Content-Length|Content-Type|Authorization")
+	Config.RedisHost = envOr("APP_REDIS_HOST", "127.0.0.1")
+	Config.RedisPort = envOr("APP_REDIS_PORT", "6379")
 }

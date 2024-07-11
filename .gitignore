@@ -5,3 +5,4 @@ static
 .env
 !.env.example
 go.sum
+.idea

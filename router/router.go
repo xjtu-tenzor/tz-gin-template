@@ -1,9 +1,8 @@
 package router
 
 import (
-	"template/middleware"
-
 	"github.com/gin-gonic/gin"
+	"template/middleware"
 )
 
 func InitRouter(r *gin.Engine) {
@@ -17,5 +16,4 @@ func InitRouter(r *gin.Engine) {
 		apiRouter.GET("/time", ctr.Hello.HelloTime)
 		// end
 	}
-
 }

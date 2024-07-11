@@ -24,6 +24,10 @@ var validatorHandleRouter = map[string]validateHandle{
 		timing,
 		timingTransZh,
 	},
+	"phone": {
+		phone,
+		phoneTransZh,
+	},
 }
 
 var Trans ut.Translator

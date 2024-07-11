@@ -7,5 +7,6 @@ import (
 func init() {
 	initConfig()
 	initLogger()
+	initRedis()
 	validator.InitValidator(Config.AppLanguage)
 }

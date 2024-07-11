@@ -14,6 +14,7 @@ tz-gin run
 ## 目录结构
 
 ```
+├─cache         //设置和读取常用查询和页面的函数
 ├─common     	//各层级都会复用的结构体及函数，比如错误处理
 ├─config       	//配置文件
 ├─controller   	//所有与HTTP请求相关的业务逻辑都放在controller层中

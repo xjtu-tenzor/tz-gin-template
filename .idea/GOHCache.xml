@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoORMHelperCache">
+    <option name="schemaMapping">
+      <map>
+        <entry key="BaseModel">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/model/model.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Controller">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/controller/controller.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Hello">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/controller/hello-example.go" />
+              <option value="file://$PROJECT_DIR$/service/hello-example.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="IDUriForm">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/common/form.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="PagerForm">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/common/form.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Resource">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/model/resource-example.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Response">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/controller/init.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Service">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/service/service.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UserSession">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/controller/session.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="validateHandle">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/service/validator/init.go" />
+            </set>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="scannedPathMapping">
+      <map>
+        <entry key="file://$PROJECT_DIR$/common/error.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833980" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/form.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833981" />
+              <option name="schema">
+                <list>
+                  <option value="IDUriForm" />
+                  <option value="PagerForm" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/config/config.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720974746932" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/config/default.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833983" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/config/init.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720975573873" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/config/logger.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720975971165" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/controller/controller.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833985" />
+              <option name="schema">
+                <list>
+                  <option value="Controller" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/controller/hello-example.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833986" />
+              <option name="schema">
+                <list>
+                  <option value="Hello" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/controller/init.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833986" />
+              <option name="schema">
+                <list>
+                  <option value="Response" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/controller/session.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833987" />
+              <option name="schema">
+                <list>
+                  <option value="UserSession" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720975573883" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/middleware/error.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833991" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/middleware/log.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720976106660" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/middleware/role.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833992" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/model/init.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833993" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/model/model.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833994" />
+              <option name="schema">
+                <list>
+                  <option value="BaseModel" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/model/resource-example.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833994" />
+              <option name="schema">
+                <list>
+                  <option value="Resource" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/model/scopes.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833995" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/router/init.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833996" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/router/router.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720975114146" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/service/hello-example.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833997" />
+              <option name="schema">
+                <list>
+                  <option value="Hello" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/service/service.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833998" />
+              <option name="schema">
+                <list>
+                  <option value="Service" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/service/validator/init.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972833999" />
+              <option name="schema">
+                <list>
+                  <option value="validateHandle" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/service/validator/translations.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972834000" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/service/validator/validators.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1720972834001" />
+            </ScannedPath>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="tableStructMapping">
+      <map>
+        <entry key="base_model" value="BaseModel" />
+        <entry key="controller" value="Controller" />
+        <entry key="hello" value="Hello" />
+        <entry key="id_uri_form" value="IDUriForm" />
+        <entry key="pager_form" value="PagerForm" />
+        <entry key="resource" value="Resource" />
+        <entry key="response" value="Response" />
+        <entry key="service" value="Service" />
+        <entry key="user_session" value="UserSession" />
+        <entry key="validate_handle" value="validateHandle" />
+      </map>
+    </option>
+    <option name="lastTimeChecked" value="1720973059358" />
+  </component>
+</project>

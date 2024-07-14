@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	config.Init()
 	gin.SetMode(config.Config.AppMode)
 	srv := router.NewServer()
 

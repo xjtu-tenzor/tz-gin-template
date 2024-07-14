@@ -2,13 +2,12 @@ package config
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"os"
 	"path"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 func createLogger(prefix string) io.Writer {
@@ -55,8 +54,8 @@ func initLogger() {
 	if Config.AppProd {
 		GinLogger = createLogger("gin")
 		DatabaseLogger = createLogger("database")
-
 		gin.DisableConsoleColor()
-		gin.DefaultWriter = GinLogger
+		gin.DefaultWriter = io.MultiWriter(GinLogger, os.Stdout)
+
 	}
 }

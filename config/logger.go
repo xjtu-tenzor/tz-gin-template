@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"io"
 
 	"os"
 	"path/filepath"
@@ -76,11 +77,41 @@ type LogWriter struct {
 }
 
 func (lw LogWriter) Write(p []byte) (n int, err error) {
-	return lw.Logger.Out.Write(p)
+	lw.Logger.Info(string(p))
+	return len(p), nil
 }
 
 func initLogger() {
 	config := readLogConfig()
 	DatabaseLogger = createLogger(config.DbLogFile, config.LogOutput, config)
 	GinLogger = createLogger(config.GinLogFile, config.LogOutput, config)
+
+	stderrLogger := createLogger("stderr", config.LogOutput, config)
+	if stderrLogger != nil {
+		stderrWriter := &LogWriter{Logger: stderrLogger}
+		redirectStderr(stderrWriter)
+	} else {
+		logrus.Errorf("Failed to create stderr logger")
+	}
+}
+
+// capture stderr to log file
+func redirectStderr(logWriter *LogWriter) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		logrus.Errorf("Failed to create pipe for stderr redirection: %v", err)
+		return
+	}
+	os.Stderr = w
+
+	go func() {
+		_, err := io.Copy(logWriter, r)
+		if err != nil {
+			logrus.Errorf("Failed to copy stderr to log writer: %v", err)
+		}
+		err = r.Close()
+		if err != nil {
+			logrus.Errorf("Failed to close pipe reader: %v", err)
+		}
+	}()
 }

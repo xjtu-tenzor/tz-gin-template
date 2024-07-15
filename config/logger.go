@@ -47,7 +47,6 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 
 	dateString := time.Now().Format(config.TimeFormat)
 	logFilePath := filepath.Join(logDir, fmt.Sprintf("%s.%s.log", logFilePrefix, dateString))
-	fmt.Println(logFilePath)
 	logger := logrus.New()
 
 	level, err := logrus.ParseLevel(config.LogLevel)

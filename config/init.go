@@ -4,7 +4,7 @@ import (
 	"template/service/validator"
 )
 
-func Init() {
+func init() {
 	initConfig()
 	initLogger()
 	validator.InitValidator(Config.AppLanguage)

@@ -1,9 +1,8 @@
 package router
 
 import (
-	"template/middleware"
-
 	"github.com/gin-gonic/gin"
+	"template/middleware"
 )
 
 func InitRouter(r *gin.Engine) {
@@ -16,18 +15,5 @@ func InitRouter(r *gin.Engine) {
 		apiRouter.GET("/", ctr.Hello.Hello)
 		apiRouter.GET("/time", ctr.Hello.HelloTime)
 		// end
-	}
-	v1 := r.Group("v1")
-	{
-		v1.GET("/ping", func(context *gin.Context) {
-			context.JSON(200, gin.H{
-				"message": "pong",
-			})
-		})
-		v1.GET("/error", func(context *gin.Context) {
-			context.JSON(404, gin.H{
-				"message": "error",
-			})
-		})
 	}
 }

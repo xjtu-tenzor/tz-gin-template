@@ -1,12 +1,10 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
-
 	"os"
 	"path/filepath"
 	"time"
@@ -19,31 +17,16 @@ type LogConfig struct {
 	DbLogFile  string `json:"db_log_file"`
 	LogMaxSize int    `json:"log_max_size"`
 	TimeFormat string `json:"time_format"`
-	LogFormat  string `json:"log_format"`
 	MaxAge     int    `json:"max_age"`
 	MaxBackups int    `json:"max_backups"`
 	Compress   bool   `json:"compress"`
-}
-
-func readLogConfig() LogConfig {
-	file, err := os.ReadFile("./log.json")
-	if err != nil {
-		logrus.Fatalf("Failed to read log config: %v", err)
-	}
-
-	var config LogConfig
-	err = json.Unmarshal(file, &config)
-	if err != nil {
-		logrus.Fatalf("Failed to unmarshal log config: %v", err)
-	}
-	return config
 }
 
 func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.Logger {
 	logDir := filepath.Join(".", logOutputDir)
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		logrus.Errorf("Failed to create log directory: %v", err)
-		return nil // Return nil to avoid application termination
+		return nil
 	}
 
 	dateString := time.Now().Format(config.TimeFormat)
@@ -53,16 +36,23 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 	level, err := logrus.ParseLevel(config.LogLevel)
 	if err != nil {
 		logrus.Errorf("Invalid log level: %v", err)
-		return nil // Return nil to avoid application termination
+		return nil
 	}
 	logger.SetLevel(level)
 
-	logger.Out = &lumberjack.Logger{
+	logOutput := &lumberjack.Logger{
 		Filename:   logFilePath,
 		MaxSize:    config.LogMaxSize,
 		MaxBackups: config.MaxBackups,
 		MaxAge:     config.MaxAge,
 		Compress:   config.Compress,
+	}
+
+	// If the log level is debug, log to both file and console
+	if Config.AppMode == "debug" {
+		logger.Out = io.MultiWriter(logOutput, os.Stdout)
+	} else {
+		logger.Out = logOutput
 	}
 
 	return logger
@@ -77,12 +67,22 @@ type LogWriter struct {
 }
 
 func (lw LogWriter) Write(p []byte) (n int, err error) {
-	lw.Logger.Info(string(p))
+	lw.Logger.Error(fmt.Sprintf("stderr: %s", string(p)))
 	return len(p), nil
 }
 
 func initLogger() {
-	config := readLogConfig()
+	config := LogConfig{
+		LogLevel:   Config.LogLevel,
+		LogOutput:  "./log",
+		GinLogFile: "gin",
+		DbLogFile:  "database",
+		LogMaxSize: 512,
+		TimeFormat: "20060102",
+		MaxAge:     7,
+		MaxBackups: 5,
+		Compress:   true,
+	}
 	DatabaseLogger = createLogger(config.DbLogFile, config.LogOutput, config)
 	GinLogger = createLogger(config.GinLogFile, config.LogOutput, config)
 

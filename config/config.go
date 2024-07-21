@@ -18,6 +18,7 @@ var Config struct {
 	MysqlPass    string
 	AllowOrigins string
 	AllowHeaders string
+	LogLevel     string
 }
 
 func envOr(env string, or string) string {
@@ -44,4 +45,5 @@ func initConfig() {
 	Config.MysqlPass = envOr("APP_MYSQL_PASS", "123456")
 	Config.AllowOrigins = envOr("APP_ALLOW_ORIGINS", "*")
 	Config.AllowHeaders = envOr("APP_ALLOW_HEADERS", "Origin|Content-Length|Content-Type|Authorization")
+	Config.LogLevel = envOr("APP_LOG_LEVEL", "info")
 }

@@ -16,5 +16,4 @@ func main() {
 		fmt.Printf("fail to init server: %s\n", err.Error())
 		panic(err)
 	}
-
 }

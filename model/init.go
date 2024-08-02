@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"log"
+	dblog "template/logger"
 	"time"
 
 	"template/config"
@@ -22,14 +23,24 @@ func init() {
 		config.Config.MysqlPort,
 		config.Config.MysqlName)
 	var dbLogger logger.Interface
-	if config.DatabaseLogger == nil {
+	if dblog.DatabaseLogger == nil {
 		dbLogger = logger.Default.LogMode(logger.Info)
 	} else {
+		logLevels := map[string]int{
+			"error": 2,
+			"warn":  3,
+			"info":  4,
+		}
+
+		levels, ok := logLevels[config.Config.LogLevel]
+		if !ok {
+			levels = 4
+		}
 		dbLogger = logger.New(
-			log.New(config.DatabaseLogger, "\n", log.LstdFlags),
+			log.New(dblog.DataLogger{dblog.DatabaseLogger}, "\n", log.LstdFlags),
 			logger.Config{
 				SlowThreshold:             200 * time.Millisecond,
-				LogLevel:                  logger.Info,
+				LogLevel:                  logger.LogLevel(levels),
 				IgnoreRecordNotFoundError: true,
 				Colorful:                  false,
 			},

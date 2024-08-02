@@ -16,5 +16,4 @@ func InitRouter(r *gin.Engine) {
 		apiRouter.GET("/time", ctr.Hello.HelloTime)
 		// end
 	}
-
 }

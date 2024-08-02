@@ -18,15 +18,15 @@ func (w ResponseBodyWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func Errorf(format string, args ...interface{}) {
-	GinLogger.Errorf(format, args...)
+func Errorf(ctx *gin.Context, format string, args ...interface{}) {
+	GinLogger.WithContext(ctx).Errorf(format, args...)
 }
-func Warnf(format string, args ...interface{}) {
-	GinLogger.Warnf(format, args...)
+func Warnf(ctx *gin.Context, format string, args ...interface{}) {
+	GinLogger.WithContext(ctx).Warnf(format, args...)
 }
-func Infof(format string, args ...interface{}) {
-	GinLogger.Infof(format, args...)
+func Infof(ctx *gin.Context, format string, args ...interface{}) {
+	GinLogger.WithContext(ctx).Infof(format, args...)
 }
-func Debugf(format string, args ...interface{}) {
-	GinLogger.Debugf(format, args...)
+func Debugf(ctx *gin.Context, format string, args ...interface{}) {
+	GinLogger.WithContext(ctx).Debugf(format, args...)
 }

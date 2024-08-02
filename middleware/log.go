@@ -11,25 +11,15 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
-	"template/config"
+	"template/logger"
 	"time"
 )
-
-type responseBodyWriter struct {
-	gin.ResponseWriter
-	body *bytes.Buffer
-}
-
-func (w responseBodyWriter) Write(b []byte) (int, error) {
-	w.body.Write(b)
-	return w.ResponseWriter.Write(b)
-}
 
 func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		cCp := c.Copy()
-		w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
+		w := &logger.ResponseBodyWriter{Body: &bytes.Buffer{}, ResponseWriter: c.Writer}
 
 		go func() {
 			status := cCp.Writer.Status()
@@ -47,16 +37,16 @@ func GinLogger() gin.HandlerFunc {
 				level = logrus.ErrorLevel
 			}
 
-			if config.GinLogger.Level == logrus.DebugLevel {
+			if logger.GinLogger.Level == logrus.DebugLevel {
 				cCp.Writer = w
 				responseHeaders := cCp.Writer.Header()
-				responseBody := w.body.Bytes()
+				responseBody := w.Body.Bytes()
 				var requestBody []byte
 				requestBody, _ = ioutil.ReadAll(c.Request.Body)
 				cCp.Request.Body = ioutil.NopCloser(strings.NewReader(string(requestBody)))
 				requestHeaders, _ := httputil.DumpRequest(c.Request, false)
 
-				config.GinLogger.WithFields(logrus.Fields{
+				logger.GinLogger.WithFields(logrus.Fields{
 					"method":           method,
 					"url":              path,
 					"query":            query,
@@ -70,7 +60,7 @@ func GinLogger() gin.HandlerFunc {
 					"response_body":    string(responseBody),
 				}).Debug("Debug level log with detailed information")
 			} else {
-				config.GinLogger.Log(level,
+				logger.GinLogger.Log(level,
 					"method:", method, ";"+
 						" url:", path, ";"+
 						" query:", query, "; "+
@@ -99,14 +89,14 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
 				if brokenPipe {
-					config.GinLogger.Error("broken pipe: ", err, ". Request: ", string(httpRequest))
+					logger.GinLogger.Error("broken pipe: ", err, ". Request: ", string(httpRequest))
 					c.Abort()
 					return
 				}
 				if stack {
-					config.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest), ". Stack: ", string(debug.Stack()))
+					logger.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest), ". Stack: ", string(debug.Stack()))
 				} else {
-					config.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest))
+					logger.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest))
 				}
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}

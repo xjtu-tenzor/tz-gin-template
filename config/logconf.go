@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"template/logger"
 	"time"
 )
 
@@ -58,19 +59,6 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 	return logger
 }
 
-var GinLogger *logrus.Logger
-var DatabaseLogger *logrus.Logger
-
-// implement io.Writer for logrus, to compatant with gorm logger
-type LogWriter struct {
-	*logrus.Logger
-}
-
-func (lw LogWriter) Write(p []byte) (n int, err error) {
-	lw.Logger.Error(fmt.Sprintf("stderr: %s", string(p)))
-	return len(p), nil
-}
-
 func initLogger() {
 	config := LogConfig{
 		LogLevel:   Config.LogLevel,
@@ -83,35 +71,14 @@ func initLogger() {
 		MaxBackups: 5,
 		Compress:   true,
 	}
-	DatabaseLogger = createLogger(config.DbLogFile, config.LogOutput, config)
-	GinLogger = createLogger(config.GinLogFile, config.LogOutput, config)
+	logger.DatabaseLogger = createLogger(config.DbLogFile, config.LogOutput, config)
+	logger.GinLogger = createLogger(config.GinLogFile, config.LogOutput, config)
 
 	stderrLogger := createLogger("stderr", config.LogOutput, config)
 	if stderrLogger != nil {
-		stderrWriter := &LogWriter{Logger: stderrLogger}
-		redirectStderr(stderrWriter)
+		stderrWriter := &logger.StdWriter{Logger: stderrLogger}
+		logger.RedirectStderr(stderrWriter)
 	} else {
 		logrus.Errorf("Failed to create stderr logger")
 	}
-}
-
-// capture stderr to log file
-func redirectStderr(logWriter *LogWriter) {
-	r, w, err := os.Pipe()
-	if err != nil {
-		logrus.Errorf("Failed to create pipe for stderr redirection: %v", err)
-		return
-	}
-	os.Stderr = w
-
-	go func() {
-		_, err := io.Copy(logWriter, r)
-		if err != nil {
-			logrus.Errorf("Failed to copy stderr to log writer: %v", err)
-		}
-		err = r.Close()
-		if err != nil {
-			logrus.Errorf("Failed to close pipe reader: %v", err)
-		}
-	}()
 }

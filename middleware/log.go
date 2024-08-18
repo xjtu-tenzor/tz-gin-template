@@ -18,17 +18,33 @@ import (
 func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
-		cCp := c.Copy()
 		w := &logger.ResponseBodyWriter{Body: &bytes.Buffer{}, ResponseWriter: c.Writer}
+		c.Writer = w
+
+		// Read and store the request body
+		var requestBody []byte
+		if c.Request.Body != nil {
+			bodyBytes, err := ioutil.ReadAll(c.Request.Body)
+			if err == nil {
+				requestBody = make([]byte, len(bodyBytes))
+				copy(requestBody, bodyBytes)
+				c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes)) // Reset request body
+			}
+		}
+
+		// Create a copy of the context for logging
+		logContext := *c
+
+		c.Next()
 
 		go func() {
-			status := cCp.Writer.Status()
-			path := cCp.Request.URL.Path
-			query := cCp.Request.URL.RawQuery
+			status := logContext.Writer.Status()
+			path := logContext.Request.URL.Path
+			query := logContext.Request.URL.RawQuery
 			cost := time.Since(start)
-			method := cCp.Request.Method
-			clientIP := cCp.ClientIP()
-			userAgent := cCp.Request.UserAgent()
+			method := logContext.Request.Method
+			clientIP := logContext.ClientIP()
+			userAgent := logContext.Request.UserAgent()
 
 			level := logrus.InfoLevel
 			if status >= 400 && status < 500 {
@@ -38,27 +54,25 @@ func GinLogger() gin.HandlerFunc {
 			}
 
 			if logger.GinLogger.Level == logrus.DebugLevel {
-				cCp.Writer = w
-				responseHeaders := cCp.Writer.Header()
-				responseBody := w.Body.Bytes()
-				var requestBody []byte
-				requestBody, _ = ioutil.ReadAll(c.Request.Body)
-				cCp.Request.Body = ioutil.NopCloser(strings.NewReader(string(requestBody)))
-				requestHeaders, _ := httputil.DumpRequest(c.Request, false)
+				if logContext.Writer != nil {
+					responseHeaders := logContext.Writer.Header()
+					responseBody := w.Body.Bytes()
+					requestHeaders, _ := httputil.DumpRequest(logContext.Request, false)
 
-				logger.GinLogger.WithFields(logrus.Fields{
-					"method":           method,
-					"url":              path,
-					"query":            query,
-					"clientIP":         clientIP,
-					"userAgent":        userAgent,
-					"status":           status,
-					"duration":         cost,
-					"request_headers":  string(requestHeaders),
-					"request_body":     string(requestBody),
-					"response_headers": responseHeaders,
-					"response_body":    string(responseBody),
-				}).Debug("Debug level log with detailed information")
+					logger.GinLogger.WithFields(logrus.Fields{
+						"method":           method,
+						"url":              path,
+						"query":            query,
+						"clientIP":         clientIP,
+						"userAgent":        userAgent,
+						"status":           status,
+						"duration":         cost,
+						"request_headers":  string(requestHeaders),
+						"request_body":     string(requestBody),
+						"response_headers": responseHeaders,
+						"response_body":    string(responseBody),
+					}).Debug("Debug level log with detailed information")
+				}
 			} else {
 				logger.GinLogger.Log(level,
 					"method:", method, ";"+
@@ -70,7 +84,6 @@ func GinLogger() gin.HandlerFunc {
 						"Duration:", cost)
 			}
 		}()
-		c.Next()
 	}
 }
 

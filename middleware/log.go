@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -24,11 +24,11 @@ func GinLogger() gin.HandlerFunc {
 		// Read and store the request body
 		var requestBody []byte
 		if c.Request.Body != nil {
-			bodyBytes, err := ioutil.ReadAll(c.Request.Body)
+			bodyBytes, err := io.ReadAll(c.Request.Body)
 			if err == nil {
 				requestBody = make([]byte, len(bodyBytes))
 				copy(requestBody, bodyBytes)
-				c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes)) // Reset request body
+				c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes)) // Reset request body
 			}
 		}
 

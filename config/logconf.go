@@ -2,13 +2,14 @@ package config
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
 	"path/filepath"
 	"template/logger"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type LogConfig struct {
@@ -21,6 +22,30 @@ type LogConfig struct {
 	MaxAge     int    `json:"max_age"`
 	MaxBackups int    `json:"max_backups"`
 	Compress   bool   `json:"compress"`
+}
+
+// you can customize the log output color here:
+type CustomFormatter struct {
+	logrus.TextFormatter
+}
+
+func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+	var levelColor int
+	switch entry.Level {
+	case logrus.DebugLevel:
+		levelColor = 36 // Cyan
+	case logrus.InfoLevel:
+		levelColor = 32 // Green
+	case logrus.WarnLevel:
+		levelColor = 33 // Yellow
+	case logrus.ErrorLevel:
+		levelColor = 31 // Red
+	case logrus.FatalLevel, logrus.PanicLevel:
+		levelColor = 35 // Magenta
+	}
+
+	entry.Message = fmt.Sprintf("\033[%dm%s\033[0m", levelColor, entry.Message)
+	return f.TextFormatter.Format(entry)
 }
 
 func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.Logger {
@@ -40,6 +65,10 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 		return nil
 	}
 	logger.SetLevel(level)
+	logger.SetFormatter(&logrus.TextFormatter{
+		ForceColors:   true,
+		FullTimestamp: true,
+	})
 
 	logOutput := &lumberjack.Logger{
 		Filename:   logFilePath,

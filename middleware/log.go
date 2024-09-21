@@ -2,8 +2,6 @@ package middleware
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"io"
 	"net"
 	"net/http"
@@ -13,6 +11,9 @@ import (
 	"strings"
 	"template/logger"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func GinLogger() gin.HandlerFunc {
@@ -36,7 +37,6 @@ func GinLogger() gin.HandlerFunc {
 		logContext := *c
 
 		c.Next()
-
 		go func() {
 			status := logContext.Writer.Status()
 			path := logContext.Request.URL.Path

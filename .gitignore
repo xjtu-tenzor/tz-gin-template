@@ -8,3 +8,4 @@ go.sum
 .idea
 test
 log.json
+bin

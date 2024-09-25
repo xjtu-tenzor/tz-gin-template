@@ -44,7 +44,11 @@ tz-gin提供了部分简单的示例代码，其放在 `*-example.go`下，作�
 
 ## 日志
 
+日志共有4种主要模式， `debug`、`info`、`warn`、`error`， 当然有隐藏模式 `trace` ，需要使用钩子开启。
+可以在env文件里配置APP_LOG_LEVEL里面设置，默认`info`。注意日志的模式和设置项目是否为生产模式没有关系。
+
 在生产模式下，日志会输出到 `log` 目录下。默认的日志记录信息包含了 `url,method,client_ip`等信息，如果发生错误则会输出包含栈信息的日志。
+如果Gin处于Debug模式，日志将会同步输出到 `stdout`中。日志默认捕获GinLogger和GinRecovery, Gorm以及stderr信息。
 
 **记录日志**：
 项目开发过程中，建议使用 `logger.Infof`等方式输出，而不是使用 `fmt.Print `，具体用法可见 `logger/gin.go`

@@ -2,8 +2,6 @@ package middleware
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"io"
 	"net"
 	"net/http"
@@ -11,8 +9,12 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
+	"template/config"
 	"template/logger"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func GinLogger() gin.HandlerFunc {
@@ -36,8 +38,14 @@ func GinLogger() gin.HandlerFunc {
 		logContext := *c
 
 		c.Next()
-
 		go func() {
+			select {
+			case <-config.SkipSignalChan:
+				return
+			default:
+				goto log
+			}
+		log:
 			status := logContext.Writer.Status()
 			path := logContext.Request.URL.Path
 			query := logContext.Request.URL.RawQuery
@@ -46,13 +54,6 @@ func GinLogger() gin.HandlerFunc {
 			clientIP := logContext.ClientIP()
 			userAgent := logContext.Request.UserAgent()
 
-			level := logrus.InfoLevel
-			if status >= 400 && status < 500 {
-				level = logrus.WarnLevel
-			} else if status >= 500 {
-				level = logrus.ErrorLevel
-			}
-
 			if logger.GinLogger.Level == logrus.DebugLevel {
 				if logContext.Writer != nil {
 					responseHeaders := logContext.Writer.Header()
@@ -60,28 +61,49 @@ func GinLogger() gin.HandlerFunc {
 					requestHeaders, _ := httputil.DumpRequest(logContext.Request, false)
 
 					logger.GinLogger.WithFields(logrus.Fields{
-						"method":           method,
-						"url":              path,
-						"query":            query,
-						"clientIP":         clientIP,
-						"userAgent":        userAgent,
-						"status":           status,
-						"duration":         cost,
-						"request_headers":  string(requestHeaders),
-						"request_body":     string(requestBody),
-						"response_headers": responseHeaders,
-						"response_body":    string(responseBody),
+						"\nmethod":           method,
+						"\nurl":              path,
+						"\nquery":            query,
+						"\nclient_ip":        clientIP,
+						"\nuser_agent":       userAgent,
+						"\nstatus":           status,
+						"\nduration":         cost,
+						"\nrequest_headers":  string(requestHeaders),
+						"\nrequest_body":     string(requestBody),
+						"\nresponse_headers": responseHeaders,
+						"\nresponse_body":    string(responseBody),
 					}).Debug("Debug level log with detailed information")
 				}
 			} else {
-				logger.GinLogger.Log(level,
-					"method:", method, ";"+
-						" url:", path, ";"+
-						" query:", query, "; "+
-						"ClientIP:", clientIP, "; "+
-						"UserAgent:", userAgent, "; "+
-						"Status:", status, "; "+
-						"Duration:", cost)
+				switch {
+				case status >= http.StatusInternalServerError:
+					logger.GinLogger.WithFields(logrus.Fields{
+						"\nmethod:":     method,
+						"\nurl:":        path,
+						"\nquery:":      query,
+						"\nclient_ip:":  clientIP,
+						"\nuser_agent:": userAgent,
+						"\nStatus:":     status,
+						"\nduration:":   cost}).Error("Error level log with brief information")
+				case status >= http.StatusBadRequest:
+					logger.GinLogger.WithFields(logrus.Fields{
+						"\nmethod:":     method,
+						"\nurl:":        path,
+						"\nquery:":      query,
+						"\nclient_ip:":  clientIP,
+						"\nuser_agent:": userAgent,
+						"\nstatus:":     status,
+						"\nduration:":   cost}).Warn("Warn level log with brief information")
+				default:
+					logger.GinLogger.WithFields(logrus.Fields{
+						"\nmethod:":     method,
+						"\nurl:":        path,
+						"\nquery:":      query,
+						"\nclient_ip:":  clientIP,
+						"\nuser_agent:": userAgent,
+						"\nstatus:":     status,
+						"\nduration:":   cost}).Info("Info level log with brief information")
+				}
 			}
 		}()
 	}

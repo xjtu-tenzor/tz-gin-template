@@ -44,14 +44,24 @@ tz-gin提供了部分简单的示例代码，其放在 `*-example.go`下，作�
 
 ## 日志
 
-在生产模式下，日志会输出到 `log` 目录下。默认的日志记录信息包含了 `url,method,clientIP`等信息，如果发生错误则会输出包含栈信息的日志。
+在生产模式下，日志会输出到 `log` 目录下。默认的日志记录信息包含了 `url,method,client_ip`等信息，如果发生错误则会输出包含栈信息的日志。
 
 **记录日志**：
-项目开发过程中，建议使用 `logger.Infof`等输出，而不是使用 `fmt.Print `，具体用法可见 `logger/gin.go`
+项目开发过程中，建议使用 `logger.Infof`等方式输出，而不是使用 `fmt.Print `，具体用法可见 `logger/gin.go`
 
 **自定义日志输出**：
 
-可以在 `config/logconf`里面的的 `Format`修改格式，也可以使用 `logger.WithFields`这个方法添加自定义字段
+可以在 `config/logconf`里面的的 `Format`修改输出颜色等格式约定，也可以使用 `logger.WithFields`这个方法添加自定义字段。
+
+**日志钩子**
+
+需要实现 `logrus.Hook`，实现两个方法为 `Levels`和 `Fire`，例子可以见 `config/loghook`，通过使用方法 `logger.AddHook(&CustomHook{})`来为 `logger`添加钩子。
+
+**可选择使用的日志钩子（默认关闭）**
+
+1.TraceHook：将debug模式转换为trace模式，输出堆栈信息。
+
+2.RemoteHook：将日志推送到远程服务器.
 
 # 项目开发规范
 

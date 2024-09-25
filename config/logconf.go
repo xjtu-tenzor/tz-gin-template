@@ -12,6 +12,11 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+// 这个是给TraceHook使用的
+// 设置了debug模式转换成trace模式
+// 设置是否要在trace下输出gin框架网络请求的日志
+var SkipSignalChan = make(chan struct{})
+
 type LogConfig struct {
 	LogLevel   string `json:"log_level"`
 	LogOutput  string `json:"log_output"`
@@ -24,7 +29,7 @@ type LogConfig struct {
 	Compress   bool   `json:"compress"`
 }
 
-// you can customize the log output color here:
+// 自定义日志输出样式
 type CustomFormatter struct {
 	logrus.TextFormatter
 }
@@ -44,7 +49,46 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		levelColor = 35 // Magenta
 	}
 
+	// 设置日志消息的颜色
 	entry.Message = fmt.Sprintf("\033[%dm%s\033[0m", levelColor, entry.Message)
+
+	// 设置字段名称的颜色
+	coloredData := make(logrus.Fields)
+	for k, v := range entry.Data {
+		var fieldColor int
+		switch k {
+		case "\nmethod":
+			fieldColor = 34 // Blue
+		case "\nurl":
+			fieldColor = 32 // Green
+
+		case "\nclient_ip":
+			fieldColor = 36 // Cyan
+		case "\nuser_agent":
+			fieldColor = 35 // Magenta
+
+		case "\nstatus":
+			fieldColor = 31 // Red
+
+		case "\nrequest_headers":
+			fieldColor = 33 // Yellow
+		case "\nrequest_body":
+			fieldColor = 33
+
+		case "\nresponse_headers":
+			fieldColor = 34
+		case "\nresponse_body":
+			fieldColor = 34
+
+		case "\nduration":
+			fieldColor = 111 // Bright Yellow
+		default:
+			fieldColor = levelColor // 使用日志级别的颜色
+		}
+		coloredData[fmt.Sprintf("\033[%dm%s\033[0m", fieldColor, k)] = v
+	}
+	entry.Data = coloredData
+
 	return f.TextFormatter.Format(entry)
 }
 
@@ -65,10 +109,15 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 		return nil
 	}
 	logger.SetLevel(level)
-	logger.SetFormatter(&logrus.TextFormatter{
-		ForceColors:   true,
-		FullTimestamp: true,
-	})
+	logger.SetFormatter(
+		&CustomFormatter{
+			TextFormatter: logrus.TextFormatter{
+				ForceColors:     true,
+				FullTimestamp:   true,
+				TimestampFormat: config.TimeFormat,
+			},
+		},
+	)
 
 	logOutput := &lumberjack.Logger{
 		Filename:   logFilePath,
@@ -84,6 +133,13 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 	} else {
 		logger.Out = logOutput
 	}
+
+	// Add hooks
+	//调试时候可以使用这个,将debug转换为trace模式，有堆栈信息
+	//logger.AddHook(&TraceHook{})
+	//推送日志到服务器
+	//logger.AddHook(&RemoteHook{Endpoint: "http://localhost:8080/log"})
+	//...
 
 	return logger
 }

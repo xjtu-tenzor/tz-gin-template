@@ -78,31 +78,31 @@ func GinLogger() gin.HandlerFunc {
 				switch {
 				case status >= http.StatusInternalServerError:
 					logger.GinLogger.WithFields(logrus.Fields{
-						"\nmethod:":     method,
-						"\nurl:":        path,
-						"\nquery:":      query,
-						"\nclient_ip:":  clientIP,
-						"\nuser_agent:": userAgent,
-						"\nStatus:":     status,
-						"\nduration:":   cost}).Error("Error level log with brief information")
+						"\nmethod":     method,
+						"\nurl":        path,
+						"\nquery":      query,
+						"\nclient_ip":  clientIP,
+						"\nuser_agent": userAgent,
+						"\nStatus":     status,
+						"\nduration":   cost}).Error("Error level log with brief information")
 				case status >= http.StatusBadRequest:
 					logger.GinLogger.WithFields(logrus.Fields{
-						"\nmethod:":     method,
-						"\nurl:":        path,
-						"\nquery:":      query,
-						"\nclient_ip:":  clientIP,
-						"\nuser_agent:": userAgent,
-						"\nstatus:":     status,
-						"\nduration:":   cost}).Warn("Warn level log with brief information")
+						"\nmethod":     method,
+						"\nurl":        path,
+						"\nquery":      query,
+						"\nclient_ip":  clientIP,
+						"\nuser_agent": userAgent,
+						"\nstatus":     status,
+						"\nduration":   cost}).Warn("Warn level log with brief information")
 				default:
 					logger.GinLogger.WithFields(logrus.Fields{
-						"\nmethod:":     method,
-						"\nurl:":        path,
-						"\nquery:":      query,
-						"\nclient_ip:":  clientIP,
-						"\nuser_agent:": userAgent,
-						"\nstatus:":     status,
-						"\nduration:":   cost}).Info("Info level log with brief information")
+						"\nmethod":     method,
+						"\nurl":        path,
+						"\nquery":      query,
+						"\nclient_ip:": clientIP,
+						"\nuser_agent": userAgent,
+						"\nstatus":     status,
+						"\nduration":   cost}).Info("Info level log with brief information")
 				}
 			}
 		}()

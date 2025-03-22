@@ -1,10 +1,10 @@
 package logger
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
+	"runtime"
 )
 
 type StdWriter struct {
@@ -12,7 +12,11 @@ type StdWriter struct {
 }
 
 func (sw StdWriter) Write(p []byte) (n int, err error) {
-	sw.Logger.Error(fmt.Sprintf("stderr: %s", string(p)))
+	// Retrieve the file and line number where the error occurred
+	pc, file, line, _ := runtime.Caller(2)
+	func_name := runtime.FuncForPC(pc).Name()
+
+	sw.Logger.Errorf("Find stderr: %s Location: File: %s, Line: %d, Function Name: %s", string(p), file, line, func_name)
 	return len(p), nil
 }
 

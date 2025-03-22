@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"runtime"
 	"runtime/debug"
 	"strings"
 	"template/config"
@@ -128,10 +129,14 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 					c.Abort()
 					return
 				}
+
+				pc, file, line, _ := runtime.Caller(3)
+				func_name := runtime.FuncForPC(pc).Name()
+
 				if stack {
-					logger.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest), ". Stack: ", string(debug.Stack()))
+					logger.GinLogger.Errorf("panic recovered: %v. Request: %s. File: %s, Line: %d, Function: %s. Stack: %s", err, string(httpRequest), file, line, func_name, string(debug.Stack()))
 				} else {
-					logger.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest))
+					logger.GinLogger.Errorf("panic recovered: %v. Request: %s. File: %s, Line: %d, Function: %s", err, string(httpRequest), file, line, func_name)
 				}
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}

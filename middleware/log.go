@@ -130,6 +130,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 					return
 				}
 
+				//deeper stack
 				pc, file, line, _ := runtime.Caller(3)
 				func_name := runtime.FuncForPC(pc).Name()
 

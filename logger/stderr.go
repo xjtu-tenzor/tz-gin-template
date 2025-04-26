@@ -4,7 +4,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
-	"runtime/debug"
 )
 
 type StdWriter struct {
@@ -12,14 +11,7 @@ type StdWriter struct {
 }
 
 func (sw StdWriter) Write(p []byte) (n int, err error) {
-	if GinLogger.Level == logrus.DebugLevel {
-		// Capture the full stack trace
-		stack := debug.Stack()
-		sw.Logger.Errorf("Find stderr: %s \nStack Trace: %s", string(p), stack)
-		return len(p), nil
-	} else {
-		sw.Logger.Errorf("Find stderr: %s", string(p))
-	}
+	sw.Logger.Errorf("Find stderr: %s", string(p))
 	return len(p), nil
 }
 

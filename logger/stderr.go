@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
@@ -12,7 +11,7 @@ type StdWriter struct {
 }
 
 func (sw StdWriter) Write(p []byte) (n int, err error) {
-	sw.Logger.Error(fmt.Sprintf("stderr: %s", string(p)))
+	sw.Logger.Errorf("Find stderr: %s", string(p))
 	return len(p), nil
 }
 

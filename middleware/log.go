@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"runtime"
 	"runtime/debug"
 	"strings"
 	"template/config"
@@ -78,31 +79,31 @@ func GinLogger() gin.HandlerFunc {
 				switch {
 				case status >= http.StatusInternalServerError:
 					logger.GinLogger.WithFields(logrus.Fields{
-						"\nmethod:":     method,
-						"\nurl:":        path,
-						"\nquery:":      query,
-						"\nclient_ip:":  clientIP,
-						"\nuser_agent:": userAgent,
-						"\nStatus:":     status,
-						"\nduration:":   cost}).Error("Error level log with brief information")
+						"\nmethod":     method,
+						"\nurl":        path,
+						"\nquery":      query,
+						"\nclient_ip":  clientIP,
+						"\nuser_agent": userAgent,
+						"\nStatus":     status,
+						"\nduration":   cost}).Error("Error level log with brief information")
 				case status >= http.StatusBadRequest:
 					logger.GinLogger.WithFields(logrus.Fields{
-						"\nmethod:":     method,
-						"\nurl:":        path,
-						"\nquery:":      query,
-						"\nclient_ip:":  clientIP,
-						"\nuser_agent:": userAgent,
-						"\nstatus:":     status,
-						"\nduration:":   cost}).Warn("Warn level log with brief information")
+						"\nmethod":     method,
+						"\nurl":        path,
+						"\nquery":      query,
+						"\nclient_ip":  clientIP,
+						"\nuser_agent": userAgent,
+						"\nstatus":     status,
+						"\nduration":   cost}).Warn("Warn level log with brief information")
 				default:
 					logger.GinLogger.WithFields(logrus.Fields{
-						"\nmethod:":     method,
-						"\nurl:":        path,
-						"\nquery:":      query,
-						"\nclient_ip:":  clientIP,
-						"\nuser_agent:": userAgent,
-						"\nstatus:":     status,
-						"\nduration:":   cost}).Info("Info level log with brief information")
+						"\nmethod":     method,
+						"\nurl":        path,
+						"\nquery":      query,
+						"\nclient_ip:": clientIP,
+						"\nuser_agent": userAgent,
+						"\nstatus":     status,
+						"\nduration":   cost}).Info("Info level log with brief information")
 				}
 			}
 		}()
@@ -128,10 +129,15 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 					c.Abort()
 					return
 				}
+
+				//deeper stack
+				pc, file, line, _ := runtime.Caller(3)
+				func_name := runtime.FuncForPC(pc).Name()
+
 				if stack {
-					logger.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest), ". Stack: ", string(debug.Stack()))
+					logger.GinLogger.Errorf("panic recovered: %v. Request: %s. File: %s, Line: %d, Function: %s. Stack: %s", err, string(httpRequest), file, line, func_name, string(debug.Stack()))
 				} else {
-					logger.GinLogger.Error("panic recovered: ", err, ". Request: ", string(httpRequest))
+					logger.GinLogger.Errorf("panic recovered: %v. Request: %s. File: %s, Line: %d, Function: %s", err, string(httpRequest), file, line, func_name)
 				}
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}

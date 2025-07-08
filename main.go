@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"template/config"
-	"template/logger"
 	"template/router"
 
 	"github.com/gin-gonic/gin"

@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-	logger.Errorf("info %s", "hello")
 	gin.SetMode(config.Config.AppMode)
 	srv := router.NewServer()
 

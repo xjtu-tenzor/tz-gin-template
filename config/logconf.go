@@ -115,6 +115,9 @@ func createLogger(logFilePrefix, logOutputDir string, config LogConfig) *logrus.
 				ForceColors:     true,
 				FullTimestamp:   true,
 				TimestampFormat: config.TimeFormat,
+				DisableQuote:    true,
+				DisableSorting:  true,
+				//PadLevelText:    false,
 			},
 		},
 	)

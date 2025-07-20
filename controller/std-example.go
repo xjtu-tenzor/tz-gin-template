@@ -40,7 +40,7 @@ func (sc *StdController) FunctionDemo(c *gin.Context) {
 	}
 
 	// 包装为 Function
-	calcFn := std.NewFunc3(calculate)
+	calcFn := std.NewFunction(calculate)
 
 	// 从查询参数获取值
 	aStr := c.DefaultQuery("a", "10")

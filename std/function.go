@@ -6,13 +6,20 @@ import (
 )
 
 // Function 类似于 C++ 的 std::function，用于存储可调用对象
+// 仿函数, 所有可以通过 f_name(args...) 调用的对象, 可以用forward.go中实现
+// ↑见func_prog.go
+// std::function<return_type(arg1_type, arg2_type, ...)> f_name;
+
+// 有人问这样做不是更麻烦, 但是包装了一层之后函数什么时候调用, 用什么参数调用
+// 是否需要先空几个参数, 到时候再放进去
+
 type Function[T any] struct {
 	fn    interface{}
 	fnVal reflect.Value
 	fnTyp reflect.Type
 }
 
-// NewFunction 创建一个新的 Function 实例
+// NewFunction
 func NewFunction[T any](fn T) *Function[T] {
 	fnVal := reflect.ValueOf(fn)
 	if fnVal.Kind() != reflect.Func {
@@ -26,7 +33,9 @@ func NewFunction[T any](fn T) *Function[T] {
 	}
 }
 
-// Call 调用存储的函数
+// Call 调用存储的函数, 区分一下和反射库的call
+// 反射库的call参数类型是 []reflect.Value, auto&& 类型
+// 这个封装了一下,直接塞数值就行
 func (f *Function[T]) Call(args ...interface{}) []interface{} {
 	if f.fn == nil {
 		panic("Function: cannot call nil function")
@@ -71,34 +80,4 @@ func (f *Function[T]) IsValid() bool {
 // Type 返回函数类型
 func (f *Function[T]) Type() reflect.Type {
 	return f.fnTyp
-}
-
-// 便利函数：创建常见类型的 Function
-
-// Func0 无参数函数
-type Func0[R any] func() R
-
-func NewFunc0[R any](fn func() R) *Function[Func0[R]] {
-	return NewFunction(Func0[R](fn))
-}
-
-// Func1 一个参数的函数
-type Func1[T, R any] func(T) R
-
-func NewFunc1[T, R any](fn func(T) R) *Function[Func1[T, R]] {
-	return NewFunction(Func1[T, R](fn))
-}
-
-// Func2 两个参数的函数
-type Func2[T1, T2, R any] func(T1, T2) R
-
-func NewFunc2[T1, T2, R any](fn func(T1, T2) R) *Function[Func2[T1, T2, R]] {
-	return NewFunction(Func2[T1, T2, R](fn))
-}
-
-// Func3 三个参数的函数
-type Func3[T1, T2, T3, R any] func(T1, T2, T3) R
-
-func NewFunc3[T1, T2, T3, R any](fn func(T1, T2, T3) R) *Function[Func3[T1, T2, T3, R]] {
-	return NewFunction(Func3[T1, T2, T3, R](fn))
 }

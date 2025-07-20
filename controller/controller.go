@@ -2,7 +2,7 @@ package controller
 
 type Controller struct {
 	Hello
-	Std StdController
+	// Std StdController
 }
 
 func New() *Controller {

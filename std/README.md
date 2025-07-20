@@ -1,3 +1,5 @@
+# 生成自我的AI
+
 # STD Package - C++ STL-like functionality for Go
 
 这个包提供了类似 C++ STL 的功能，包括 `std::function`、`std::bind`、`std::forward` 等特性的 Go 语言实现。
@@ -103,6 +105,8 @@ counter := 0
 increment := func() int { counter++; return counter }
 onceIncrement := std.Once(increment)
 ```
+
+// 测试代码可以见controller下面的std-example
 
 ## API 端点
 

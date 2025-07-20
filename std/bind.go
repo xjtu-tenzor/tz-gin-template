@@ -5,6 +5,11 @@ import (
 	"reflect"
 )
 
+// std::bind(fn, args...)
+// 可能需要通过完美转发
+// 占位符可以用来表示参数位置, 这样初始化函数时可以指定哪些参数是占位符
+// 然后在调用时替换为实际参数(动态绑定)
+
 // Placeholder 用于表示绑定时的占位符
 type Placeholder int
 

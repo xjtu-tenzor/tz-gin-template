@@ -148,3 +148,6 @@ const (
   ```
 - 自定义校验的注册应放在 `service/validator/init.go` 的 `validatorHandleRouter` 中，`key` 值表示的是自定义校验的名称
 - 校验规则应写在 `validators.go` 下面，翻译则应写在 `translations.go` 下面
+
+## 关于对函数式编程的支持
+详细内容见 [std和函数式文档](std/README.md)

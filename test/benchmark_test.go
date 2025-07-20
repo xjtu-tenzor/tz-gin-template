@@ -11,7 +11,7 @@ func BenchmarkFunction(b *testing.B) {
 		return a + b
 	}
 
-	fn := std.NewFunc2(add)
+	fn := std.NewFunction(add)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

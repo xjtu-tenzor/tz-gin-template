@@ -8,3 +8,4 @@ go.sum
 .idea
 log.json
 bin
+.vscode

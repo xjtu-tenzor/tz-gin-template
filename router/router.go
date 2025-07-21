@@ -17,16 +17,5 @@ func InitRouter(r *gin.Engine) {
 		apiRouter.GET("/time", ctr.Hello.HelloTime)
 		// end
 
-		// 函数式编程的示例
-		// begin
-		// stdRouter := apiRouter.Group("/std")
-		// {
-		// 	stdRouter.GET("/function", ctr.Std.FunctionDemo)
-		// 	stdRouter.GET("/bind", ctr.Std.BindDemo)
-		// 	stdRouter.GET("/forward", ctr.Std.ForwardDemo)
-		// 	stdRouter.GET("/functional", ctr.Std.FunctionalDemo)
-		// 	stdRouter.GET("/advanced", ctr.Std.AdvancedDemo)
-		// }
-		// end
 	}
 }

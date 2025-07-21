@@ -15,7 +15,7 @@ add := func(a, b int) int {
     return a + b
 }
 
-fn := std.NewFunc2(add)
+fn := std.NewFunction(add)
 results := fn.Call(3, 5) // [8]
 ```
 
@@ -56,23 +56,8 @@ square := std.Bind(multiply3, std.P1, std.P1, 1.0)  // x^2
 cube := std.Bind(multiply3, std.P1, std.P1, std.P1)  // x^3
 ```
 
-### 3. Forward (std::forward)
-实现完美转发和函数组合。
 
-```go
-double := func(x int) int { return x * 2 }
-addOne := func(x int) int { return x + 1 }
-
-// 管道操作（从左到右）
-pipeline := std.Pipe(double, addOne)
-result := pipeline.Forward(3) // addOne(double(3)) = 7
-
-// 组合操作（从右到左）
-composed := std.Compose(addOne, double)
-result2 := composed.Forward(3) // addOne(double(3)) = 7
-```
-
-### 4. 函数式编程特性
+### 3. 函数式编程特性
 
 ```go
 numbers := []int{1, 2, 3, 4, 5}
@@ -93,7 +78,7 @@ addFive := curriedAdd(5)
 result := addFive(3) // 8
 ```
 
-### 5. 高级功能
+### 4. 高级功能
 
 ```go
 // 记忆化
@@ -104,37 +89,6 @@ memoFib := std.Memoize(fibonacci)
 counter := 0
 increment := func() int { counter++; return counter }
 onceIncrement := std.Once(increment)
-```
-
-// 测试代码可以见controller下面的std-example
-
-## API 端点
-
-启动服务器后，您可以访问以下端点来测试 std 包的功能：
-
-### 1. Function Demo
-```
-GET /api/std/function?a=10&b=5&op=multiply
-```
-
-### 2. Bind Demo
-```
-GET /api/std/bind?base=3
-```
-
-### 3. Forward Demo
-```
-GET /api/std/forward?input=5
-```
-
-### 4. Functional Programming Demo
-```
-GET /api/std/functional?num=1&num=2&num=3&num=4&num=5
-```
-
-### 5. Advanced Features Demo
-```
-GET /api/std/advanced?n=100
 ```
 
 ## 占位符
@@ -162,7 +116,7 @@ func main() {
         return a * b
     }
     
-    fn := std.NewFunc2(multiply)
+    fn := std.NewFunction(multiply)
     result := fn.Call(6, 7)
     fmt.Println("Function result:", result[0]) // 42
 
@@ -178,17 +132,6 @@ func main() {
     square := std.Bind(power, std._1, 2, 1)
     fmt.Println("Square of 5:", square.Call(5)[0]) // 25
 
-    // 3. 使用函数组合
-    double := func(x int) int { return x * 2 }
-    addTen := func(x int) int { return x + 10 }
-    
-    pipeline := std.Pipe(double, addTen)
-    fmt.Println("Pipeline result:", pipeline.Forward(5)[0]) // 20
-
-    // 4. 函数式编程
-    numbers := []int{1, 2, 3, 4, 5}
-    doubled := std.Map(numbers, func(x int) int { return x * 2 })
-    fmt.Println("Doubled:", doubled) // [2, 4, 6, 8, 10]
 }
 ```
 

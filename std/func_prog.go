@@ -2,11 +2,35 @@
 // 避免重复代码，专注于函数式编程特性
 package std
 
-// Invoke 调用任意可调用对象 (cpp俗称仿函数)
+import (
+	"reflect"
+	"time"
+)
+
+// Invoke 调用任意可调用对象 (cpp俗称仿函数), 指所有可以通过 f_name(args...) 调用的对象
 // 使用已有的 ForwardingFunction 避免重复反射逻辑
 func Invoke(fn interface{}, args ...interface{}) []interface{} {
-	ff := NewForwardingFunction(fn)
-	return ff.Forward(args...)
+	fnVal := reflect.ValueOf(fn)
+	if fnVal.Kind() != reflect.Func {
+		panic("Invoke: first argument must be a function")
+	}
+
+	if len(args) != fnVal.Type().NumIn() {
+		panic("Invoke: argument count mismatch")
+	}
+
+	in := make([]reflect.Value, len(args))
+	for i, arg := range args {
+		in[i] = reflect.ValueOf(arg)
+	}
+
+	results := fnVal.Call(in)
+
+	out := make([]interface{}, len(results))
+	for i, result := range results {
+		out[i] = result.Interface()
+	}
+	return out
 }
 
 // Apply 应用函数到参数列表
@@ -87,8 +111,8 @@ func Memoize[T comparable, R any](fn func(T) R) func(T) R {
 	}
 }
 
-// Debounce 防抖函数 - 在指定时间内只执行最后一次调用
-func Debounce[T any](fn func(T), delay int) func(T) {
+// Debounce在指定时间内只执行最后一次调用
+func Debounce[T any](fn func(T), delay time.Duration) func(T) {
 	// 简化版本的防抖，实际项目中可能需要使用 time.Timer
 	var lastArgs T
 	var pending bool
@@ -97,15 +121,19 @@ func Debounce[T any](fn func(T), delay int) func(T) {
 		lastArgs = args
 		if !pending {
 			pending = true
-			// 这里应该用 goroutine + timer 实现真正的防抖
-			// 为了简单起见，直接调用
-			fn(lastArgs)
+			go func() {
+				time.Sleep(delay)
+				if pending {
+					fn(lastArgs)
+				}
+				pending = false
+			}()
 			pending = false
 		}
 	}
 }
 
-// Once 只执行一次的函数
+// Once 只执行一次
 func Once[T any](fn func() T) func() T {
 	var (
 		called bool

@@ -6,9 +6,17 @@ import (
 )
 
 // std::bind(fn, args...)
-// 可能需要通过完美转发
 // 占位符可以用来表示参数位置, 这样初始化函数时可以指定哪些参数是占位符
 // 然后在调用时替换为实际参数(动态绑定)
+
+// 这里使用方法:
+// std.Bind(fn, P1, P2, args...) // P1, P2 是占位符,占位符可以放在其他位置
+// 绑定函数时, 可以指定占位符, 在调用时替换为实际参数
+// 最后使用 Call 方法调用绑定的函数, 并传入实际参数
+
+//例如: f1:= func(a int, b string, c float64) (int, string) { ...}
+// f2 := std.Bind(f1, P1, "fixed", P2) // P1, P2 是占位符
+// f2.Call(42, 3.14) // 调用时替换占位符, P1 -> 42, P2 -> 3.14
 
 // Placeholder 用于表示绑定时的占位符
 type Placeholder int
@@ -139,28 +147,5 @@ func (bf *BoundFunction) ToFunction() *Function[interface{}] {
 		fn:    bf,
 		fnVal: reflect.ValueOf(bf.Call),
 		fnTyp: reflect.TypeOf(bf.Call),
-	}
-}
-
-// 便利函数：常见的绑定模式
-
-// BindFirst 绑定第一个参数
-func BindFirst[T1, T2, R any](fn func(T1, T2) R, first T1) func(T2) R {
-	return func(second T2) R {
-		return fn(first, second)
-	}
-}
-
-// BindSecond 绑定第二个参数
-func BindSecond[T1, T2, R any](fn func(T1, T2) R, second T2) func(T1) R {
-	return func(first T1) R {
-		return fn(first, second)
-	}
-}
-
-// BindLast 绑定最后一个参数
-func BindLast[T1, T2, R any](fn func(T1, T2) R, last T2) func(T1) R {
-	return func(first T1) R {
-		return fn(first, last)
 	}
 }

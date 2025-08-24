@@ -20,6 +20,7 @@ tz-gin run
 ├─controller   	//所有与HTTP请求相关的业务逻辑都放在controller层中
 ├─middleware   	//中间件
 ├─model        	//模型
+├─pkg        	//额外的功能的实现的包
 ├─router       	//路由
 ├─service      	//服务
 │  └─validator 	//自定义数据校验
@@ -51,7 +52,7 @@ tz-gin提供了部分简单的示例代码，其放在 `*-example.go`下，作�
 如果Gin处于Debug模式，日志将会同步输出到 `stdout`中。日志默认捕获GinLogger和GinRecovery, Gorm以及stderr信息。
 
 **记录日志**：
-项目开发过程中，建议使用 `logger.Infof`等方式输出，而不是使用 `fmt.Print `，具体用法可见 `logger/gin.go`
+项目开发过程中，建议使用 `logger.Infof`等方式输出，而不是使用 `fmt.Print `，具体用法可见 `logger/gin.go`,还有别用那个logger.database那个，那是给gorm兼容用的
 
 **自定义日志输出**：
 
@@ -147,7 +148,11 @@ const (
   }
   ```
 - 自定义校验的注册应放在 `service/validator/init.go` 的 `validatorHandleRouter` 中，`key` 值表示的是自定义校验的名称
-- 校验规则应写在 `validators.go` 下面，翻译则应写在 `translations.go` 下面
+- 校验规则应写在 `validators.go` 下面，翻译1则应写在 `translations.go` 下面
 
 ## 关于对函数式编程的支持
-详细内容见 [std和函数式文档](std/README.md)
+详细内容见 [pkg和函数式文档](pkg/README.md)
+
+## 现有问题后续更新内容
+- session里面好像那个gob.Register有问题，虽然还没复现，但是先提一嘴
+- 后续更新添加更多pkg内容，也可能合并service和controller，毕竟现在写个东西改三五个地方太麻烦了

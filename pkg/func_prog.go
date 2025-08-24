@@ -1,6 +1,6 @@
 // 提供高级函数式编程功能，基于 forward.go 的基础设施
 // 避免重复代码，专注于函数式编程特性
-package std
+package pkg
 
 import (
 	"reflect"

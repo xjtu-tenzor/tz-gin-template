@@ -37,7 +37,7 @@ func init() {
 			levels = 4
 		}
 		dbLogger = logger.New(
-			log.New(dblog.DataLogger{dblog.DatabaseLogger}, "\n", log.LstdFlags),
+			log.New(dblog.DataLogger{Logger: dblog.DatabaseLogger}, "\n", log.LstdFlags),
 			logger.Config{
 				SlowThreshold:             200 * time.Millisecond,
 				LogLevel:                  logger.LogLevel(levels),

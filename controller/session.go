@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/gob"
+	"log"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,9 @@ func SessionSet(c *gin.Context, name string, body any) {
 	}
 	gob.Register(body)
 	session.Set(name, body)
-	session.Save()
+	if err := session.Save(); err != nil {
+		log.Fatalf("session save error: %v", err)
+	}
 }
 
 func SessionUpdate(c *gin.Context, name string, body any) {

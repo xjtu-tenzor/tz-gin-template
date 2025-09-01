@@ -154,5 +154,5 @@ const (
 详细内容见 [pkg和函数式文档](pkg/README.md)
 
 ## 现有问题后续更新内容
-- session里面好像那个gob.Register有问题，虽然还没复现，但是先提一嘴
 - 后续更新添加更多pkg内容，也可能合并service和controller，毕竟现在写个东西改三五个地方太麻烦了
+- session 问题已修复， 并修复了middleware/log的一个warning

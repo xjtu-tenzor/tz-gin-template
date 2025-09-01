@@ -36,7 +36,16 @@ func GinLogger() gin.HandlerFunc {
 		}
 
 		// Create a copy of the context for logging
-		logContext := *c
+		// logContext := *c
+		logContext := struct {
+			Writer   gin.ResponseWriter
+			Request  *http.Request
+			ClientIP func() string
+		}{
+			Writer:   c.Writer,
+			Request:  c.Request,
+			ClientIP: c.ClientIP,
+		}
 
 		c.Next()
 		go func() {

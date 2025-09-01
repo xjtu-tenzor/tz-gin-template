@@ -14,6 +14,12 @@ type UserSession struct {
 	Level    int
 }
 
+func _SessionSave(ss sessions.Session) {
+	if err := ss.Save(); err != nil {
+		log.Fatalf("session save error: %v", err)
+	}
+}
+
 func SessionGet(c *gin.Context, name string) any {
 	session := sessions.Default(c)
 	return session.Get(name)
@@ -26,9 +32,7 @@ func SessionSet(c *gin.Context, name string, body any) {
 	}
 	gob.Register(body)
 	session.Set(name, body)
-	if err := session.Save(); err != nil {
-		log.Fatalf("session save error: %v", err)
-	}
+	_SessionSave(session)
 }
 
 func SessionUpdate(c *gin.Context, name string, body any) {
@@ -38,9 +42,11 @@ func SessionUpdate(c *gin.Context, name string, body any) {
 func SessionClear(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
+	_SessionSave(session)
 }
 
 func SessionDelete(c *gin.Context, name string) {
 	session := sessions.Default(c)
 	session.Delete(name)
+	_SessionSave(session)
 }

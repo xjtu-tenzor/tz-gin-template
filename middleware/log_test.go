@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,7 +32,7 @@ func TestGinLogger_ManyRequests(t *testing.T) {
 		c.JSON(200, gin.H{"name": json.Name, "age": json.Age})
 	})
 
-	// 批量 GET
+	// 批量
 	// for i := 0; i < 50; i++ {
 	// 	req := httptest.NewRequest(http.MethodGet, "/ping", nil)
 	// 	w := httptest.NewRecorder()
@@ -40,15 +42,22 @@ func TestGinLogger_ManyRequests(t *testing.T) {
 	// 	}
 	// }
 
-	// 批量 POST JSON
 	body := `{"name": "Alice", "age": 30}`
-	for i := 0; i < 50; i++ {
-		req := httptest.NewRequest(http.MethodPost, "/echo", strings.NewReader(body))
-		req.Header.Set("Content-Type", "application/json")
-		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
-		if w.Code != 200 || !strings.Contains(w.Body.String(), "Alice") {
-			t.Errorf("POST /echo failed at %d: code=%d, body=%s", i, w.Code, w.Body.String())
-		}
+	var wg sync.WaitGroup
+	for i := 0; i < 500; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			req := httptest.NewRequest(http.MethodPost, "/echo", strings.NewReader(body))
+			req.Header.Set("Content-Type", "application/json")
+			w := httptest.NewRecorder()
+			r.ServeHTTP(w, req)
+			if w.Code != 200 || !strings.Contains(w.Body.String(), `"name":"Alice"`) {
+				t.Errorf("POST /echo failed at %d: code=%d, body=%s", i, w.Code, w.Body.String())
+			}
+		}(i)
 	}
+	wg.Wait()
+
+	time.Sleep(1 * time.Second)
 }

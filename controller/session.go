@@ -25,7 +25,7 @@ func SessionSet(c *gin.Context, name string, body any) {
 	}
 	gob.Register(body)
 	session.Set(name, body)
-
+	session.Save()
 }
 
 func SessionUpdate(c *gin.Context, name string, body any) {

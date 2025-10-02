@@ -30,28 +30,28 @@ func (w ResponseBodyWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func Errorf(format string, args ...interface{}) {
+func Errorf(format string, args ...any) {
 	GinLogger.WithField("source", getCaller(2)).Errorf(format, args...)
 }
-func Warnf(format string, args ...interface{}) {
+func Warnf(format string, args ...any) {
 	GinLogger.WithField("source", getCaller(2)).Warnf(format, args...)
 }
-func Infof(format string, args ...interface{}) {
+func Infof(format string, args ...any) {
 	GinLogger.WithField("source", getCaller(2)).Infof(format, args...)
 }
-func Debugf(format string, args ...interface{}) {
+func Debugf(format string, args ...any) {
 	GinLogger.WithField("source", getCaller(2)).Debugf(format, args...)
 }
 
-func ErrorCtx(ctx *gin.Context, format string, args ...interface{}) {
+func ErrorCtx(ctx *gin.Context, format string, args ...any) {
 	GinLogger.WithContext(ctx).Errorf(format, args...)
 }
-func WarnCtx(ctx *gin.Context, format string, args ...interface{}) {
+func WarnCtx(ctx *gin.Context, format string, args ...any) {
 	GinLogger.WithContext(ctx).Warnf(format, args...)
 }
-func InfoCtx(ctx *gin.Context, format string, args ...interface{}) {
+func InfoCtx(ctx *gin.Context, format string, args ...any) {
 	GinLogger.WithContext(ctx).Infof(format, args...)
 }
-func DebugCtx(ctx *gin.Context, format string, args ...interface{}) {
+func DebugCtx(ctx *gin.Context, format string, args ...any) {
 	GinLogger.WithContext(ctx).Debugf(format, args...)
 }

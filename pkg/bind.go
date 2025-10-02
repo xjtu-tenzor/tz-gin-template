@@ -49,13 +49,13 @@ var (
 // BoundFunction 绑定后的函数类
 type BoundFunction struct {
 	originalFn   reflect.Value
-	boundArgs    []interface{}
+	boundArgs    []any
 	placeholders map[int]int // placeholder -> argument position mapping
 	resultType   reflect.Type
 }
 
 // std::bind
-func Bind(fn interface{}, args ...interface{}) *BoundFunction {
+func Bind(fn any, args ...any) *BoundFunction {
 	fnVal := reflect.ValueOf(fn)
 	if fnVal.Kind() != reflect.Func {
 		panic("Bind: first argument must be a function")
@@ -68,7 +68,7 @@ func Bind(fn interface{}, args ...interface{}) *BoundFunction {
 
 	// 分析占位符
 	placeholders := make(map[int]int)
-	boundArgs := make([]interface{}, len(args))
+	boundArgs := make([]any, len(args))
 
 	for i, arg := range args {
 		if ph, ok := arg.(Placeholder); ok {
@@ -86,9 +86,9 @@ func Bind(fn interface{}, args ...interface{}) *BoundFunction {
 }
 
 // Call 调用绑定的函数
-func (bf *BoundFunction) Call(args ...interface{}) []interface{} {
+func (bf *BoundFunction) Call(args ...any) []any {
 	// 准备最终的参数列表
-	finalArgs := make([]interface{}, len(bf.boundArgs))
+	finalArgs := make([]any, len(bf.boundArgs))
 	copy(finalArgs, bf.boundArgs)
 
 	// 替换占位符 - 使用占位符编号对应参数位置
@@ -112,7 +112,7 @@ func (bf *BoundFunction) Call(args ...interface{}) []interface{} {
 	results := bf.originalFn.Call(in)
 
 	// 转换返回值
-	out := make([]interface{}, len(results))
+	out := make([]any, len(results))
 	for i, result := range results {
 		out[i] = result.Interface()
 	}
@@ -142,8 +142,8 @@ func (bf *BoundFunction) CallWithValues(args []reflect.Value) []reflect.Value {
 }
 
 // ToFunction 将绑定的函数转换为 Function
-func (bf *BoundFunction) ToFunction() *Function[interface{}] {
-	return &Function[interface{}]{
+func (bf *BoundFunction) ToFunction() *Function[any] {
+	return &Function[any]{
 		fn:    bf,
 		fnVal: reflect.ValueOf(bf.Call),
 		fnTyp: reflect.TypeOf(bf.Call),

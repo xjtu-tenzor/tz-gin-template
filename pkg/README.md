@@ -73,9 +73,9 @@ sum := pkg.Reduce(numbers, func(acc, x int) int { return acc + x }, 0)
 
 // Curry
 add := func(a, b int) int { return a + b }
-curriedAdd := pkg.Curry2(add)
-addFive := curriedAdd(5)
-result := addFive(3) // 8
+curriedAdd := pkg.Curry(add).(func(int)any) // 这是为了把any类型进行类型断言
+addFive := curriedAdd(5).(func(int) any) // 同理
+result := addFive(3).(int) // 8
 ```
 
 ### 4. 高级功能

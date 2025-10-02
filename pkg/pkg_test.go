@@ -272,8 +272,8 @@ func TestCurryVariadic(t *testing.T) {
 func TestCurryAny(t *testing.T) {
 	t.Run("TwoParamFunction", func(t *testing.T) {
 		// 测试固定二参数函数
-		curriedAdd := CurryAny(add).(func(int) interface{})
-		partialAdd := curriedAdd(10).(func(int) interface{})
+		curriedAdd := CurryAny(add).(func(int) any)
+		partialAdd := curriedAdd(10).(func(int) any)
 		result := partialAdd(5).(int)
 		expected := 15
 
@@ -284,9 +284,9 @@ func TestCurryAny(t *testing.T) {
 
 	t.Run("ThreeParamFunction", func(t *testing.T) {
 		// 测试固定三参数函数
-		curriedMultiply := CurryAny(multiply).(func(int) interface{})
-		step1 := curriedMultiply(2).(func(int) interface{})
-		step2 := step1(3).(func(int) interface{})
+		curriedMultiply := CurryAny(multiply).(func(int) any)
+		step1 := curriedMultiply(2).(func(int) any)
+		step2 := step1(3).(func(int) any)
 		result := step2(4).(int)
 		expected := 24
 
@@ -297,8 +297,8 @@ func TestCurryAny(t *testing.T) {
 
 	t.Run("StringFunction", func(t *testing.T) {
 		// 测试字符串函数
-		curriedGreet := CurryAny(greet).(func(string) interface{})
-		step1 := curriedGreet("World").(func(string) interface{})
+		curriedGreet := CurryAny(greet).(func(string) any)
+		step1 := curriedGreet("World").(func(string) any)
 		result := step1("Hello").(string)
 		expected := "Hello, World!"
 

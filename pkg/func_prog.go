@@ -7,11 +7,12 @@ package pkg
 import (
 	"reflect"
 	"time"
+	"unsafe"
 )
 
 // Invoke 调用任意可调用对象 (cpp俗称仿函数), 指所有可以通过 f_name(args...) 调用的对象
 // 使用已有的 ForwardingFunction 避免重复反射逻辑
-func Invoke(fn interface{}, args ...interface{}) []interface{} {
+func Invoke(fn any, args ...any) []any {
 	fnVal := reflect.ValueOf(fn)
 	if fnVal.Kind() != reflect.Func {
 		panic("Invoke: first argument must be a function")
@@ -28,7 +29,7 @@ func Invoke(fn interface{}, args ...interface{}) []interface{} {
 
 	results := fnVal.Call(in)
 
-	out := make([]interface{}, len(results))
+	out := make([]any, len(results))
 	for i, result := range results {
 		out[i] = result.Interface()
 	}
@@ -92,7 +93,7 @@ func CurryVariadic[R any, T any](fn func(...T) R) func(T) func(...T) R {
 
 // CurryAny 通用柯里化函数，支持任意固定参数函数
 // 通过反射将固定参数函数转换为可变参数形式进行柯里化
-func CurryAny(fn interface{}) interface{} {
+func CurryAny(fn any) any {
 	fnVal := reflect.ValueOf(fn)
 	if fnVal.Kind() != reflect.Func {
 		panic("CurryAny: argument must be a function")
@@ -109,7 +110,7 @@ func CurryAny(fn interface{}) interface{} {
 }
 
 // buildCurriedFunc 递归构建柯里化函数
-func buildCurriedFunc(originalFn reflect.Value, originalType reflect.Type, argIndex int, boundArgs []reflect.Value) interface{} {
+func buildCurriedFunc(originalFn reflect.Value, originalType reflect.Type, argIndex int, boundArgs []reflect.Value) any {
 	if argIndex >= originalType.NumIn() {
 		// 所有参数都已绑定，直接调用原函数
 		results := originalFn.Call(boundArgs)
@@ -117,7 +118,7 @@ func buildCurriedFunc(originalFn reflect.Value, originalType reflect.Type, argIn
 			return results[0].Interface()
 		}
 		// 多返回值
-		interfaces := make([]interface{}, len(results))
+		interfaces := make([]any, len(results))
 		for i, result := range results {
 			interfaces[i] = result.Interface()
 		}
@@ -130,7 +131,7 @@ func buildCurriedFunc(originalFn reflect.Value, originalType reflect.Type, argIn
 	// 动态创建函数类型
 	fnType := reflect.FuncOf(
 		[]reflect.Type{paramType},
-		[]reflect.Type{reflect.TypeOf((*interface{})(nil)).Elem()},
+		[]reflect.Type{reflect.TypeOf((*any)(unsafe.Pointer(nil))).Elem()},
 		false,
 	)
 

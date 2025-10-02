@@ -14,7 +14,7 @@ import (
 // 是否需要先空几个参数, 到时候再放进去
 
 type Function[T any] struct {
-	fn    interface{}
+	fn    any
 	fnVal reflect.Value
 	fnTyp reflect.Type
 }
@@ -36,7 +36,7 @@ func NewFunction[T any](fn T) *Function[T] {
 // Call 调用存储的函数, 区分一下和反射库的call
 // 反射库的call参数类型是 []reflect.Value, auto&& 类型
 // 这个封装了一下,直接塞数值就行
-func (f *Function[T]) Call(args ...interface{}) []interface{} {
+func (f *Function[T]) Call(args ...any) []any {
 	if f.fn == nil {
 		panic("Function: cannot call nil function")
 	}
@@ -56,7 +56,7 @@ func (f *Function[T]) Call(args ...interface{}) []interface{} {
 	results := f.fnVal.Call(in)
 
 	// 转换返回值
-	out := make([]interface{}, len(results))
+	out := make([]any, len(results))
 	for i, result := range results {
 		out[i] = result.Interface()
 	}

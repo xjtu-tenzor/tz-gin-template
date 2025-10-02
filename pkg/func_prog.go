@@ -1,5 +1,7 @@
 // 提供高级函数式编程功能，基于 forward.go 的基础设施
 // 避免重复代码，专注于函数式编程特性
+
+// 注释来自ai ♥️
 package pkg
 
 import (
@@ -78,24 +80,67 @@ func Partial[T1, T2, R any](fn func(T1, T2) R, arg1 T1) func(T2) R {
 	}
 }
 
-// Curry 柯里化函数
-func Curry2[T1, T2, R any](fn func(T1, T2) R) func(T1) func(T2) R {
-	return func(arg1 T1) func(T2) R {
-		return func(arg2 T2) R {
-			return fn(arg1, arg2)
+// CurryVariadic 柯里化可变参数函数
+func CurryVariadic[R any, T any](fn func(...T) R) func(T) func(...T) R {
+	return func(arg T) func(...T) R {
+		return func(args ...T) R {
+			allArgs := append([]T{arg}, args...)
+			return fn(allArgs...)
 		}
 	}
 }
 
-// Curry3 三参数柯里化
-func Curry3[T1, T2, T3, R any](fn func(T1, T2, T3) R) func(T1) func(T2) func(T3) R {
-	return func(arg1 T1) func(T2) func(T3) R {
-		return func(arg2 T2) func(T3) R {
-			return func(arg3 T3) R {
-				return fn(arg1, arg2, arg3)
-			}
-		}
+// CurryAny 通用柯里化函数，支持任意固定参数函数
+// 通过反射将固定参数函数转换为可变参数形式进行柯里化
+func CurryAny(fn interface{}) interface{} {
+	fnVal := reflect.ValueOf(fn)
+	if fnVal.Kind() != reflect.Func {
+		panic("CurryAny: argument must be a function")
 	}
+
+	fnType := fnVal.Type()
+	numIn := fnType.NumIn()
+
+	if numIn == 0 {
+		panic("CurryAny: function must have at least one parameter")
+	}
+
+	return buildCurriedFunc(fnVal, fnType, 0, []reflect.Value{})
+}
+
+// buildCurriedFunc 递归构建柯里化函数
+func buildCurriedFunc(originalFn reflect.Value, originalType reflect.Type, argIndex int, boundArgs []reflect.Value) interface{} {
+	if argIndex >= originalType.NumIn() {
+		// 所有参数都已绑定，直接调用原函数
+		results := originalFn.Call(boundArgs)
+		if len(results) == 1 {
+			return results[0].Interface()
+		}
+		// 多返回值
+		interfaces := make([]interface{}, len(results))
+		for i, result := range results {
+			interfaces[i] = result.Interface()
+		}
+		return interfaces
+	}
+
+	// 创建一个接受下一个参数的函数
+	paramType := originalType.In(argIndex)
+
+	// 动态创建函数类型
+	fnType := reflect.FuncOf(
+		[]reflect.Type{paramType},
+		[]reflect.Type{reflect.TypeOf((*interface{})(nil)).Elem()},
+		false,
+	)
+
+	fn := reflect.MakeFunc(fnType, func(args []reflect.Value) []reflect.Value {
+		newBoundArgs := append(boundArgs, args[0])
+		result := buildCurriedFunc(originalFn, originalType, argIndex+1, newBoundArgs)
+		return []reflect.Value{reflect.ValueOf(result)}
+	})
+
+	return fn.Interface()
 }
 
 // Memoize 记忆化函数

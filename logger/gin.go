@@ -3,10 +3,11 @@ package logger
 import (
 	"bytes"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"runtime"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 var GinLogger *logrus.Logger
@@ -31,27 +32,56 @@ func (w ResponseBodyWriter) Write(b []byte) (int, error) {
 }
 
 func Errorf(format string, args ...any) {
-	GinLogger.WithField("source", getCaller(2)).Errorf(format, args...)
-}
-func Warnf(format string, args ...any) {
-	GinLogger.WithField("source", getCaller(2)).Warnf(format, args...)
-}
-func Infof(format string, args ...any) {
-	GinLogger.WithField("source", getCaller(2)).Infof(format, args...)
-}
-func Debugf(format string, args ...any) {
-	GinLogger.WithField("source", getCaller(2)).Debugf(format, args...)
+	source := getCaller(2)
+	GinLogger.WithField("source", source).Errorf(format, args...)
 }
 
-func ErrorCtx(ctx *gin.Context, format string, args ...any) {
-	GinLogger.WithContext(ctx).Errorf(format, args...)
+func Warnf(format string, args ...any) {
+	source := getCaller(2)
+	GinLogger.WithField("source", source).Warnf(format, args...)
 }
-func WarnCtx(ctx *gin.Context, format string, args ...any) {
-	GinLogger.WithContext(ctx).Warnf(format, args...)
+
+func Infof(format string, args ...any) {
+	source := getCaller(2)
+	GinLogger.WithField("source", source).Infof(format, args...)
 }
-func InfoCtx(ctx *gin.Context, format string, args ...any) {
-	GinLogger.WithContext(ctx).Infof(format, args...)
+
+func Debugf(format string, args ...any) {
+	source := getCaller(2)
+
+	// 只有当前日志级别不会输出 Debug 时，才添加到 backtrace
+	if IsBacktraceEnabled() && GinLogger.Level > logrus.DebugLevel {
+		msg := fmt.Sprintf(format, args...)
+		fields := logrus.Fields{"source": source}
+		addToBacktrace(logrus.DebugLevel, msg, fields, source, nil)
+	}
+
+	GinLogger.WithField("source", source).Debugf(format, args...)
 }
-func DebugCtx(ctx *gin.Context, format string, args ...any) {
-	GinLogger.WithContext(ctx).Debugf(format, args...)
+
+// DebugTraced forced to add into backtrace
+func DebugTraced(format string, args ...any) {
+	source := getCaller(2)
+	msg := fmt.Sprintf(format, args...)
+	fields := logrus.Fields{"source": source}
+
+	// always backtrace
+	if IsBacktraceEnabled() {
+		addToBacktrace(logrus.DebugLevel, msg, fields, source, nil)
+	}
+
+	GinLogger.WithField("source", source).Debugf(format, args...)
 }
+
+// func ErrorCtx(ctx *gin.Context, format string, args ...any) {
+// 	GinLogger.WithContext(ctx).Errorf(format, args...)
+// }
+// func WarnCtx(ctx *gin.Context, format string, args ...any) {
+// 	GinLogger.WithContext(ctx).Warnf(format, args...)
+// }
+// func InfoCtx(ctx *gin.Context, format string, args ...any) {
+// 	GinLogger.WithContext(ctx).Infof(format, args...)
+// }
+// func DebugCtx(ctx *gin.Context, format string, args ...any) {
+// 	GinLogger.WithContext(ctx).Debugf(format, args...)
+// }

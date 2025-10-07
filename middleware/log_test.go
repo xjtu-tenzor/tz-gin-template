@@ -8,10 +8,13 @@ import (
 	"testing"
 	"time"
 
+	"template/logger"
+
 	"github.com/gin-gonic/gin"
 )
 
 func TestGinLogger_ManyRequests(t *testing.T) {
+	logger.Infof("Starting TestGinLogger_ManyRequests")
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 	r.Use(GinLogger())

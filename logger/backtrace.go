@@ -99,7 +99,7 @@ func DumpBacktrace() {
 
 	GinLogger.Info("***** BACKTRACE START *****")
 
-	backtrace.buffer.Do(func(v interface{}) {
+	backtrace.buffer.Do(func(v any) {
 		if v != nil {
 			entry := v.(LogEntry)
 			logEntry := GinLogger.WithFields(entry.Fields).WithField("source", entry.Source)
@@ -141,7 +141,7 @@ func DumpBacktraceCtx(ctx *gin.Context) {
 }
 
 // ErrorWithBacktrace 记录错误并自动输出回溯
-func ErrorWithBacktrace(format string, args ...interface{}) {
+func ErrorWithBacktrace(format string, args ...any) {
 	Errorf(format, args...)
 	DumpBacktrace()
 }

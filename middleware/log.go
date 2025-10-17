@@ -82,7 +82,7 @@ func GinLogger() gin.HandlerFunc {
 						"\nrequest_body":     string(requestBody),
 						"\nresponse_headers": responseHeaders,
 						"\nresponse_body":    string(responseBody),
-					}).Debug("Debug level log with detailed information")
+					}).Debug()
 				}
 			} else {
 				switch {
@@ -94,7 +94,7 @@ func GinLogger() gin.HandlerFunc {
 						"\nclient_ip":  clientIP,
 						"\nuser_agent": userAgent,
 						"\nStatus":     status,
-						"\nduration":   cost}).Error("Error level log with brief information")
+						"\nduration":   cost}).Error()
 				case status >= http.StatusBadRequest:
 					logger.GinLogger.WithFields(logrus.Fields{
 						"\nmethod":     method,
@@ -103,7 +103,7 @@ func GinLogger() gin.HandlerFunc {
 						"\nclient_ip":  clientIP,
 						"\nuser_agent": userAgent,
 						"\nstatus":     status,
-						"\nduration":   cost}).Warn("Warn level log with brief information")
+						"\nduration":   cost}).Warn()
 				default:
 					logger.GinLogger.WithFields(logrus.Fields{
 						"\nmethod":     method,
@@ -112,7 +112,7 @@ func GinLogger() gin.HandlerFunc {
 						"\nclient_ip:": clientIP,
 						"\nuser_agent": userAgent,
 						"\nstatus":     status,
-						"\nduration":   cost}).Info("Info level log with brief information")
+						"\nduration":   cost}).Info()
 				}
 			}
 		}()
